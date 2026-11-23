@@ -14872,5 +14872,174 @@ Count only VISIBLE titles. Blank pills count as ZERO, so the offline fallback sh
   console.log('[ZED] X -> portrait FIX v2 active');
 })();
 </script>
+
+<!-- ZED E-STATEMENT TAB — 23 Nov 2026 — ECZ E-Statement inside app, no leaving -->
+<style id="zed-estatement-style">
+  #zed-estatement-view{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#071A2E;display:none;flex-direction:column;}
+  #zed-estatement-view.open{display:flex;}
+  #zed-estatement-view .zed-est-head{padding:12px 12px 10px;background:#071A2E;border-bottom:1px solid rgba(255,255,255,.14);}
+  #zed-estatement-view .zed-est-title{color:#fff;font-size:16px;font-weight:900;margin:0;}
+  #zed-estatement-view .zed-est-sub{color:#A9B8D0;font-size:12px;margin:4px 0 0;}
+  #zed-estatement-view .zed-est-actions{display:flex;gap:8px;margin-top:10px;}
+  #zed-estatement-view .zed-est-btn{flex:1;border:none;border-radius:999px;padding:10px 8px;font-size:12px;font-weight:900;cursor:pointer;}
+  #zed-estatement-view .zed-est-reload{background:#E8C15A;color:#071A2E;}
+  #zed-estatement-view .zed-est-open{background:#0F2547;color:#fff;border:1px solid rgba(255,255,255,.25);}
+  #zed-estatement-view .zed-est-note{background:#0A1E3A;color:#D6DEEB;font-size:11px;line-height:1.4;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.12);}
+  #zed-estatement-view iframe{flex:1;width:100%;min-height:0;border:0;background:#fff;display:block;}
+</style>
+<script>
+(function(){
+  if(window.__zedEstatement) return; window.__zedEstatement = true;
+  var ECZ_URL = 'https://estatements.exams-council.org.zm:8000/search';
+  var INACTIVE_CLS = 'h-7 px-3 rounded-full text-[11px] uppercase tracking-[0.12em] font-semibold border whitespace-nowrap bg-transparent border-[var(--border)] text-[var(--muted)]';
+  var ACTIVE_CLS = 'h-7 px-3 rounded-full text-[11px] uppercase tracking-[0.12em] font-semibold border whitespace-nowrap bg-[var(--text)] text-[var(--bg)] border-[var(--text)]';
+  var isOpen = false;
+  var iframeCreated = false;
+
+  function tabBar(){
+    try{
+      var h = document.querySelector('header');
+      if(!h) return null;
+      var bar = h.nextElementSibling;
+      if(!bar) return null;
+      // Must be the React tab bar: contains Papers button
+      var btns = bar.querySelectorAll('button');
+      for(var i=0;i<btns.length;i++){ if((btns[i].textContent||'').trim().toLowerCase()==='papers') return bar; }
+      return null;
+    }catch(e){ return null; }
+  }
+  function mainEl(){ try{ return document.querySelector('main'); }catch(e){ return null; } }
+  function ensureView(){
+    var v = document.getElementById('zed-estatement-view');
+    if(v) return v;
+    v = document.createElement('div');
+    v.id = 'zed-estatement-view';
+    v.innerHTML =
+      '<div class="zed-est-head">'
+      + '<p class="zed-est-title">\uD83C\uDF93 E-Statement of Results</p>'
+      + '<p class="zed-est-sub">ECZ E-Statement System — search inside ZED Scholar, no need to leave the app.</p>'
+      + '<div class="zed-est-actions">'
+      + '<button type="button" class="zed-est-btn zed-est-reload" id="zed-est-reload">\u21BB Reload</button>'
+      + '<button type="button" class="zed-est-btn zed-est-open" id="zed-est-open">Open in Browser \u2197</button>'
+      + '</div></div>'
+      + '<div class="zed-est-note">Choose Level, Exam Year and Exam Number, then search. If the form is blank, ECZ is blocking in-app view on this phone — tap Open in Browser.</div>';
+    document.body.appendChild(v);
+    var rel = document.getElementById('zed-est-reload');
+    if(rel) rel.addEventListener('click', function(){
+      try{
+        var fr = document.getElementById('zed-estatement-iframe');
+        if(fr){ fr.src = ECZ_URL; }
+      }catch(e){}
+    });
+    var op = document.getElementById('zed-est-open');
+    if(op) op.addEventListener('click', function(){ try{ window.open(ECZ_URL, '_blank'); }catch(e){} });
+    return v;
+  }
+  function positionView(){
+    try{
+      var v = document.getElementById('zed-estatement-view');
+      var bar = tabBar();
+      if(!v || !bar) return;
+      var r = bar.getBoundingClientRect();
+      v.style.top = Math.max(0, Math.round(r.bottom)) + 'px';
+    }catch(e){}
+  }
+  function setTabActive(active){
+    try{
+      var b = document.getElementById('zed-estatement-tab');
+      if(b) b.className = active ? ACTIVE_CLS : INACTIVE_CLS;
+      // De-activate React tabs visually when we are open (React still thinks old tab is active)
+      var bar = tabBar();
+      if(bar && active){
+        bar.querySelectorAll('button').forEach(function(x){
+          if(x.id === 'zed-estatement-tab') return;
+          x.className = INACTIVE_CLS;
+        });
+      }
+    }catch(e){}
+  }
+  function openResults(){
+    if(isOpen) return;
+    isOpen = true;
+    var v = ensureView();
+    positionView();
+    v.classList.add('open');
+    var m = mainEl();
+    if(m) m.style.display = 'none';
+    setTabActive(true);
+    // Lazy-create iframe once so form data is not lost on re-open
+    if(!iframeCreated){
+      iframeCreated = true;
+      try{
+        var fr = document.createElement('iframe');
+        fr.id = 'zed-estatement-iframe';
+        fr.src = ECZ_URL;
+        fr.title = 'ECZ E-Statement System';
+        fr.setAttribute('allow', 'forms; scripts; same-origin; popups');
+        fr.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+        v.appendChild(fr);
+      }catch(e){}
+    }
+    try{ window.scrollTo(0,0); }catch(e){}
+  }
+  function closeResults(){
+    if(!isOpen) return;
+    isOpen = false;
+    try{
+      var v = document.getElementById('zed-estatement-view');
+      if(v) v.classList.remove('open');
+      var m = mainEl();
+      if(m) m.style.display = '';
+      setTabActive(false);
+    }catch(e){}
+  }
+  // Expose for other patches / debugging
+  window.zedOpenEstatement = openResults;
+  window.zedCloseEstatement = closeResults;
+
+  function ensureButton(){
+    try{
+      var bar = tabBar();
+      if(!bar) return;
+      var existing = document.getElementById('zed-estatement-tab');
+      if(existing){
+        // Keep active state in sync if React re-rendered the bar
+        if(isOpen) existing.className = ACTIVE_CLS;
+        return;
+      }
+      var b = document.createElement('button');
+      b.id = 'zed-estatement-tab';
+      b.type = 'button';
+      b.textContent = 'Results';
+      b.className = isOpen ? ACTIVE_CLS : INACTIVE_CLS;
+      b.addEventListener('click', function(ev){
+        try{ ev.preventDefault(); ev.stopPropagation(); }catch(e){}
+        openResults();
+      });
+      bar.appendChild(b);
+    }catch(e){}
+  }
+  // Any click on a real React tab closes Results
+  document.addEventListener('click', function(e){
+    try{
+      if(isOpen){
+        var t = e.target && e.target.closest ? e.target.closest('button') : null;
+        if(t && t.id !== 'zed-estatement-tab'){
+          var bar = tabBar();
+          if(bar && bar.contains(t)) closeResults();
+        }
+      }
+    }catch(err){}
+  }, true);
+  window.addEventListener('resize', positionView);
+  window.addEventListener('orientationchange', function(){ setTimeout(positionView, 300); });
+  setInterval(function(){
+    try{ ensureButton(); if(isOpen) positionView(); }catch(e){}
+  }, 800);
+  ensureButton();
+  console.log('[ZED] E-Statement Results tab active');
+})();
+</script>
 </body>
+
 </html>
