@@ -4301,7 +4301,6 @@ console.log('[ZED] Welcome popup + fast login active');
       var cats = [
         { id:'profile', icon:'👤', title:'Profile', sub:'Name, school, grade, photo' },
         { id:'passwords', icon:'🔑', title:'Manage Passwords', sub:'Change password • Forgot password' },
-        { id:'appearance', icon:'🎨', title:'Appearance', sub:'Dark / Light mode • Font size' },
         { id:'prefs', icon:'🔔', title:'Preferences', sub:'Notifications • Reminders • Data saver' },
         { id:'storage', icon:'💾', title:'Storage & About', sub:'Offline papers • About ZED' },
         { id:'privacy', icon:'🔒', title:'Privacy & Policies', sub:'Privacy Policy • Terms • What we collect' },
@@ -4331,7 +4330,7 @@ console.log('[ZED] Welcome popup + fast login active');
         card.innerHTML += '<h2>👤 Profile</h2><div style="color:#A9B8D0;font-size:13px;margin-bottom:12px;">Edit your details</div>'
           + '<div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">'
           + '<div class="zed-avatar-circle" id="zed-prof-avatar" style="background:transparent !important;">' + (av ? '<img src="'+av+'" style="width:100%;height:100%;object-fit:cover;border-radius:999px;" />' : (user && user.name ? user.name.charAt(0).toUpperCase() : 'Z')) + '</div>'
-          + '<div><button class="zed-chip" id="zed-prof-change" type="button">📷 Change Photo</button><button class="zed-chip" id="zed-prof-remove" type="button" style="margin-left:6px;">Remove</button></div></div>'
+          + '<div><button class="zed-chip" id="zed-prof-change" type="button">📷 Change Photo</button></div></div>'
           + '<input id="zed-prof-avatar-input" type="file" accept="image/*" style="display:none;" />'
           + '<label>Full Name</label><input id="zed-p-name" value="'+(user?user.name||'':'')+'" />'
           + '<label>School</label><input id="zed-p-school" value="'+(user?user.school||'':'')+'" />'
@@ -4359,19 +4358,7 @@ console.log('[ZED] Welcome popup + fast login active');
             alert('Profile photo updated ✓ - Tap SAVE PROFILE to keep it');
           });
         });
-        card.querySelector('#zed-prof-remove').addEventListener('click', function(){
-          localStorage.removeItem('zed_avatar');
-          var u = getUser(); if(u){ delete u.avatar; delete u.avatar_url; localStorage.setItem('zed_user', JSON.stringify(u)); }
-          var avEl2 = card.querySelector('#zed-prof-avatar');
-          if(avEl2){ avEl2.innerHTML = (u && u.name ? u.name.charAt(0).toUpperCase() : 'Z'); avEl2.style.background = 'transparent'; avEl2.style.backgroundImage = 'none'; }
-          try{
-            var hdr2 = document.querySelector('header');
-            if(hdr2){
-              var prof2 = hdr2.querySelector('#zed-profile-only');
-              if(prof2){ prof2.innerHTML = (u && u.name ? u.name.charAt(0).toUpperCase() : 'Z'); prof2.style.background = '#222'; prof2.style.backgroundImage = 'none'; }
-            }
-          }catch(e){}
-        });
+        // REMOVED 23 Nov 2026 - Remove photo button removed per owner request. Photo can only be changed, not removed.
         card.querySelector('#zed-p-save').addEventListener('click', async function(){
           var name = card.querySelector('#zed-p-name').value.trim();
           var school = card.querySelector('#zed-p-school').value.trim();
@@ -4450,33 +4437,7 @@ console.log('[ZED] Welcome popup + fast login active');
         return;
         // CLEANED: unreachable OLD combined Change + Forgot block deleted — new categorised Change + dedicated Recovery above are kept.
       }
-      if(id === 'appearance'){
-        card.innerHTML += '<h2>🎨 Appearance</h2><div style="color:#A9B8D0;font-size:13px;margin-bottom:12px;">Make ZED yours</div>'
-          + '<div class="zed-toggle-row"><span>☀️ Light Mode / 🌙 Dark Mode</span><button class="zed-toggle" id="zed-ap-theme" type="button"></button></div>'
-          + '<label style="margin-top:14px;">Font Size</label><div style="display:flex;gap:8px;"><button class="zed-chip" data-font="small" type="button">A- Small</button><button class="zed-chip" data-font="medium" type="button">A Medium</button><button class="zed-chip" data-font="large" type="button">A+ Large</button></div>'
-          + '<div style="color:#A9B8D0;font-size:12px;margin-top:12px;">Light mode is easier in bright sunlight. Dark mode saves battery.</div>';
-        var tt = card.querySelector('#zed-ap-theme');
-        if(document.body.classList.contains('zed-light')) tt.classList.add('on');
-        tt.addEventListener('click', function(){
-          var nowLight = !document.body.classList.contains('zed-light');
-          document.body.classList.toggle('zed-light', nowLight);
-          document.documentElement.classList.toggle('zed-light', nowLight);
-          localStorage.setItem('zed_theme', nowLight?'light':'dark');
-          tt.classList.toggle('on', nowLight);
-        });
-        var curFs = localStorage.getItem('zed_font_size') || 'medium';
-        card.querySelectorAll('[data-font]').forEach(function(ch){
-          if(ch.dataset.font===curFs) ch.classList.add('active');
-          ch.addEventListener('click', function(){
-            card.querySelectorAll('[data-font]').forEach(function(c){ c.classList.remove('active'); });
-            ch.classList.add('active');
-            document.body.classList.remove('zed-font-small','zed-font-large');
-            if(ch.dataset.font==='small') document.body.classList.add('zed-font-small');
-            if(ch.dataset.font==='large') document.body.classList.add('zed-font-large');
-            localStorage.setItem('zed_font_size', ch.dataset.font);
-          });
-        });
-      }
+      // REMOVED 23 Nov 2026 - Appearance category removed per owner request (was circled). No Dark/Light or Font size here.
       if(id === 'prefs'){
         card.innerHTML += '<h2>🔔 Preferences</h2>'
           + '<div class="zed-toggle-row"><span>🔔 Notifications<br><small style="font-size:11px;color:#A9B8D0;font-weight:400;">New chats, new papers & new videos</small></span><button class="zed-toggle" id="zed-p-notif-real" type="button"></button></div>'
@@ -6791,7 +6752,7 @@ window.zedVerifyAdminCode = async function(code){
       var b = (e.target && e.target.closest) ? e.target.closest('button') : null;
       if(!b) return;
       var t = ((b.textContent||'').trim().toLowerCase());
-      var nonAdmin = ['papers','quizzes','docs','videos','leaderboard','profile'];
+      var nonAdmin = ['papers','quizzes','docs','videos','leaderboard','profile','settings'];
       if(nonAdmin.indexOf(t)===-1) return;
       var c=document.getElementById('zed-admin-gemini-card');
       if(c){ try{ c.remove(); }catch(_e){} }
@@ -10791,7 +10752,7 @@ html body #zed-fab-stack #zed-chat-btn #zed-chat-unread-badge, #zed-chat-btn #ze
 <!-- so they moved the NEW tab's toolbar / transformed cards into the OLD tab's content, then -->
 <!-- React swapped <main> and they moved everything again. That move → hide → show loop is the -->
 <!-- flicker you saw: the new tab's own toolbar/cards flashing before settling. -->
-<!-- FIX: one synchronous capture-phase guard for ALL 7 tabs. On tap it (1) records the TARGET -->
+<!-- FIX: one synchronous capture-phase guard for ALL 8 tabs. On tap it (1) records the TARGET -->
 <!-- tab from the button itself (not the stale active class), (2) adds body.zed-tab-switching -->
 <!-- which CSS uses to keep injected UI hidden + fade <main> out, (3) freezes every patch -->
 <!-- loop until React has actually swapped <main>, then (4) releases so patches run ONCE on -->
@@ -10811,7 +10772,7 @@ html body #zed-fab-stack #zed-chat-btn #zed-chat-unread-badge, #zed-chat-btn #ze
   if(window.__zedTabFlickerInitV2) return;
   window.__zedTabFlickerInitV2 = true;
   window.__zedTabFlickerInit = true; // keep old flag so old checks still work
-  var TAB_NAMES = ['papers','quizzes','docs','videos','leaderboard','admin','profile'];
+  var TAB_NAMES = ['papers','quizzes','docs','videos','leaderboard','admin','profile','settings'];
   var pending = null, switchUntil = 0, clearTimer = null, settleTimer = null, releasing = false, switchStartedAt = 0, lastActive = '';
   function norm(s){ return String(s||'').trim().toLowerCase().replace(/\s+/g,' '); }
   function getTabBarButtons(){
@@ -14873,173 +14834,279 @@ Count only VISIBLE titles. Blank pills count as ZERO, so the offline fallback sh
 })();
 </script>
 
-<!-- ZED E-STATEMENT TAB — 23 Nov 2026 — ECZ E-Statement inside app, no leaving -->
-<style id="zed-estatement-style">
-  #zed-estatement-view{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#071A2E;display:none;flex-direction:column;}
-  #zed-estatement-view.open{display:flex;}
-  #zed-estatement-view .zed-est-head{padding:12px 12px 10px;background:#071A2E;border-bottom:1px solid rgba(255,255,255,.14);}
-  #zed-estatement-view .zed-est-title{color:#fff;font-size:16px;font-weight:900;margin:0;}
-  #zed-estatement-view .zed-est-sub{color:#A9B8D0;font-size:12px;margin:4px 0 0;}
-  #zed-estatement-view .zed-est-actions{display:flex;gap:8px;margin-top:10px;}
-  #zed-estatement-view .zed-est-btn{flex:1;border:none;border-radius:999px;padding:10px 8px;font-size:12px;font-weight:900;cursor:pointer;}
-  #zed-estatement-view .zed-est-reload{background:#E8C15A;color:#071A2E;}
-  #zed-estatement-view .zed-est-open{background:#0F2547;color:#fff;border:1px solid rgba(255,255,255,.25);}
-  #zed-estatement-view .zed-est-note{background:#0A1E3A;color:#D6DEEB;font-size:11px;line-height:1.4;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.12);}
-  #zed-estatement-view iframe{flex:1;width:100%;min-height:0;border:0;background:#fff;display:block;}
+<!-- ZED - SETTINGS TAB (23 Nov 2026, Plan D - tab opens the Settings sheet, no move) -->
+<!-- WHY Plan D: Plans A/B moved the Settings modal into the tab DURING the same tap that opened it. -->
+<!-- That tap's finger-lift then lands on the moved sheet's backdrop and the sheet's own -->
+<!-- "tap backdrop to close" handler removes it - so it flashed and vanished in <1s. -->
+<!-- The sheet works fine from the profile pic because it is never moved. -->
+<!-- So: the Settings tab now opens the SAME sheet, in place, without moving it, without hiding -->
+<!-- <main>, and without fighting React's tab system. The tab stays highlighted behind the sheet. -->
+<!-- When the sheet closes (X / backdrop / Back), the tab goes back to your last tab. -->
+<!-- If the sheet ever fails to open, a fallback button shows in the tab area instead of blank. -->
+<style id="zed-settings-tab-style">
+  #zed-settings-tab-page{display:none !important;max-width:1200px;margin:0 auto;padding:18px 16px 90px;box-sizing:border-box;}
+  #zed-settings-tab-page.zed-active{display:block !important;}
+  #zed-prof-remove{display:none !important;visibility:hidden !important;}
+  #zed-loading-logo{animation:zed-loading-failsafe 0.5s ease 4.5s forwards !important;}
+  @keyframes zed-loading-failsafe{to{opacity:0 !important;visibility:hidden !important;pointer-events:none !important;}}
 </style>
 <script>
+// === ZED - Settings Tab (Plan D - no move, 23 Nov 2026) ===
 (function(){
-  if(window.__zedEstatement) return; window.__zedEstatement = true;
-  var ECZ_URL = 'https://estatements.exams-council.org.zm:8000/search';
-  var INACTIVE_CLS = 'h-7 px-3 rounded-full text-[11px] uppercase tracking-[0.12em] font-semibold border whitespace-nowrap bg-transparent border-[var(--border)] text-[var(--muted)]';
-  var ACTIVE_CLS = 'h-7 px-3 rounded-full text-[11px] uppercase tracking-[0.12em] font-semibold border whitespace-nowrap bg-[var(--text)] text-[var(--bg)] border-[var(--text)]';
-  var isOpen = false;
-  var iframeCreated = false;
+  if(window.__zedSettingsTabInit) return;
+  window.__zedSettingsTabInit = true;
+  var settingsActive = false;
+  var lastRealTab = 'papers';
+  var opening = false;
+  var syncTimer = null;
+  var lastClean = 0;
+  var fallbackShown = false;
 
-  function tabBar(){
+  function norm(s){ return String(s||'').trim().toLowerCase().replace(/\s+/g,' '); }
+  function getTabBar(){
     try{
       var h = document.querySelector('header');
-      if(!h) return null;
-      var bar = h.nextElementSibling;
-      if(!bar) return null;
-      // Must be the React tab bar: contains Papers button
-      var btns = bar.querySelectorAll('button');
-      for(var i=0;i<btns.length;i++){ if((btns[i].textContent||'').trim().toLowerCase()==='papers') return bar; }
-      return null;
-    }catch(e){ return null; }
-  }
-  function mainEl(){ try{ return document.querySelector('main'); }catch(e){ return null; } }
-  function ensureView(){
-    var v = document.getElementById('zed-estatement-view');
-    if(v) return v;
-    v = document.createElement('div');
-    v.id = 'zed-estatement-view';
-    v.innerHTML =
-      '<div class="zed-est-head">'
-      + '<p class="zed-est-title">\uD83C\uDF93 E-Statement of Results</p>'
-      + '<p class="zed-est-sub">ECZ E-Statement System — search inside ZED Scholar, no need to leave the app.</p>'
-      + '<div class="zed-est-actions">'
-      + '<button type="button" class="zed-est-btn zed-est-reload" id="zed-est-reload">\u21BB Reload</button>'
-      + '<button type="button" class="zed-est-btn zed-est-open" id="zed-est-open">Open in Browser \u2197</button>'
-      + '</div></div>'
-      + '<div class="zed-est-note">Choose Level, Exam Year and Exam Number, then search. If the form is blank, ECZ is blocking in-app view on this phone — tap Open in Browser.</div>';
-    document.body.appendChild(v);
-    var rel = document.getElementById('zed-est-reload');
-    if(rel) rel.addEventListener('click', function(){
-      try{
-        var fr = document.getElementById('zed-estatement-iframe');
-        if(fr){ fr.src = ECZ_URL; }
-      }catch(e){}
-    });
-    var op = document.getElementById('zed-est-open');
-    if(op) op.addEventListener('click', function(){ try{ window.open(ECZ_URL, '_blank'); }catch(e){} });
-    return v;
-  }
-  function positionView(){
-    try{
-      var v = document.getElementById('zed-estatement-view');
-      var bar = tabBar();
-      if(!v || !bar) return;
-      var r = bar.getBoundingClientRect();
-      v.style.top = Math.max(0, Math.round(r.bottom)) + 'px';
+      if(h && h.nextElementSibling) return h.nextElementSibling;
     }catch(e){}
+    return null;
   }
-  function setTabActive(active){
+  function getTabButtons(){
+    var bar = getTabBar();
+    if(!bar) return [];
+    return Array.prototype.slice.call(bar.querySelectorAll(':scope > button'));
+  }
+  function ensurePage(){
+    var p = document.getElementById('zed-settings-tab-page');
+    if(p) return p;
+    p = document.createElement('div');
+    p.id = 'zed-settings-tab-page';
+    p.innerHTML = '<div id="zed-settings-tab-holder"></div>';
+    document.body.appendChild(p);
+    return p;
+  }
+  function setBtnActive(btn, on){
+    if(!btn) return;
+    var ACTIVE = 'h-7 px-3 rounded-full text-[11px] uppercase tracking-[0.12em] font-semibold border whitespace-nowrap bg-[var(--text)] text-[var(--bg)] border-[var(--text)]';
+    var INACTIVE = 'h-7 px-3 rounded-full text-[11px] uppercase tracking-[0.12em] font-semibold border whitespace-nowrap bg-transparent border-[var(--border)] text-[var(--muted)]';
+    var want = on ? ACTIVE : INACTIVE;
+    if(btn.className === want) return;
+    try{ btn.className = want; }catch(e){}
+  }
+  function refreshTabBarState(){
+    var btns = getTabButtons();
+    for(var i=0;i<btns.length;i++){
+      var b = btns[i];
+      if(b.id === 'zed-settings-tab-btn'){ setBtnActive(b, settingsActive); }
+      else if(settingsActive){ setBtnActive(b, false); }
+    }
+  }
+  function cleanForbidden(){
+    var now = Date.now();
+    if(now - lastClean < 800) return;
+    lastClean = now;
     try{
-      var b = document.getElementById('zed-estatement-tab');
-      if(b) b.className = active ? ACTIVE_CLS : INACTIVE_CLS;
-      // De-activate React tabs visually when we are open (React still thinks old tab is active)
-      var bar = tabBar();
-      if(bar && active){
-        bar.querySelectorAll('button').forEach(function(x){
-          if(x.id === 'zed-estatement-tab') return;
-          x.className = INACTIVE_CLS;
-        });
+      var rm = document.getElementById('zed-prof-remove');
+      if(rm) rm.remove();
+      var rows = document.querySelectorAll('#zed-settings-modal .zed-cat-row, #zed-settings-tab-page .zed-cat-row');
+      for(var i=0;i<rows.length;i++){
+        var tx = rows[i].textContent || '';
+        if(tx.indexOf('Appearance') !== -1 && tx.indexOf('Dark / Light') !== -1) rows[i].remove();
       }
     }catch(e){}
   }
-  function openResults(){
-    if(isOpen) return;
-    isOpen = true;
-    var v = ensureView();
-    positionView();
-    v.classList.add('open');
-    var m = mainEl();
-    if(m) m.style.display = 'none';
-    setTabActive(true);
-    // Lazy-create iframe once so form data is not lost on re-open
-    if(!iframeCreated){
-      iframeCreated = true;
-      try{
-        var fr = document.createElement('iframe');
-        fr.id = 'zed-estatement-iframe';
-        fr.src = ECZ_URL;
-        fr.title = 'ECZ E-Statement System';
-        fr.setAttribute('allow', 'forms; scripts; same-origin; popups');
-        fr.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
-        v.appendChild(fr);
-      }catch(e){}
-    }
-    try{ window.scrollTo(0,0); }catch(e){}
+  function showFallback(){
+    if(fallbackShown) return;
+    var page = ensurePage();
+    var holder = document.getElementById('zed-settings-tab-holder');
+    if(!holder) return;
+    if(document.getElementById('zed-settings-modal')) return;
+    fallbackShown = true;
+    page.classList.add('zed-active');
+    var div = document.createElement('div');
+    div.id = 'zed-settings-tab-fallback';
+    div.style.cssText = 'max-width:640px;margin:0 auto;background:#0F2547;border:1px solid #C9A227;border-radius:18px;padding:20px;color:#fff;text-align:center;';
+    div.innerHTML = '<h2 style="font-size:20px;font-weight:800;margin:0 0 8px;">⚙️ Settings</h2>'
+      + '<div style="color:#A9B8D0;font-size:13px;margin-bottom:16px;">Tap below to open Settings.</div>'
+      + '<button id="zed-settings-tab-retry" type="button" style="width:100%;height:44px;background:#E8C15A;color:#000;border:none;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;">OPEN SETTINGS</button>';
+    holder.appendChild(div);
+    var btn = div.querySelector('#zed-settings-tab-retry');
+    if(btn) btn.addEventListener('click', function(){
+      try{ div.remove(); }catch(e){}
+      fallbackShown = false;
+      page.classList.remove('zed-active');
+      opening = false;
+      openSheet();
+    });
   }
-  function closeResults(){
-    if(!isOpen) return;
-    isOpen = false;
+  function clearFallback(){
     try{
-      var v = document.getElementById('zed-estatement-view');
-      if(v) v.classList.remove('open');
-      var m = mainEl();
-      if(m) m.style.display = '';
-      setTabActive(false);
+      var f = document.getElementById('zed-settings-tab-fallback');
+      if(f) f.remove();
+      fallbackShown = false;
+      var pg = document.getElementById('zed-settings-tab-page');
+      if(pg) pg.classList.remove('zed-active');
     }catch(e){}
   }
-  // Expose for other patches / debugging
-  window.zedOpenEstatement = openResults;
-  window.zedCloseEstatement = closeResults;
-
-  function ensureButton(){
-    try{
-      var bar = tabBar();
-      if(!bar) return;
-      var existing = document.getElementById('zed-estatement-tab');
-      if(existing){
-        // Keep active state in sync if React re-rendered the bar
-        if(isOpen) existing.className = ACTIVE_CLS;
+  // Open the sheet AFTER the opening tap has fully finished, so that tap cannot close it.
+  function openSheet(){
+    if(opening) return;
+    if(document.getElementById('zed-settings-modal')){ clearFallback(); return; }
+    if(!window.zedOpenSettings){
+      setTimeout(function(){ if(settingsActive && !document.getElementById('zed-settings-modal')) showFallback(); }, 800);
+      return;
+    }
+    opening = true;
+    setTimeout(function(){
+      opening = false;
+      try{
+        window.zedOpenSettings();
+      }catch(e){
+        showFallback();
         return;
       }
-      var b = document.createElement('button');
-      b.id = 'zed-estatement-tab';
-      b.type = 'button';
-      b.textContent = 'Results';
-      b.className = isOpen ? ACTIVE_CLS : INACTIVE_CLS;
-      b.addEventListener('click', function(ev){
-        try{ ev.preventDefault(); ev.stopPropagation(); }catch(e){}
-        openResults();
-      });
-      bar.appendChild(b);
-    }catch(e){}
+      // If sheet did not appear, show fallback instead of blank
+      setTimeout(function(){
+        if(settingsActive && !document.getElementById('zed-settings-modal')) showFallback();
+        else clearFallback();
+        cleanForbidden();
+      }, 300);
+    }, 60);
   }
-  // Any click on a real React tab closes Results
-  document.addEventListener('click', function(e){
+  function activateSettingsTab(){
+    if(settingsActive){
+      // Already in Settings tab - if sheet was closed, re-open it
+      if(!document.getElementById('zed-settings-modal') && !fallbackShown) openSheet();
+      return;
+    }
     try{
-      if(isOpen){
-        var t = e.target && e.target.closest ? e.target.closest('button') : null;
-        if(t && t.id !== 'zed-estatement-tab'){
-          var bar = tabBar();
-          if(bar && bar.contains(t)) closeResults();
+      var btns = getTabButtons();
+      for(var i=0;i<btns.length;i++){
+        var b = btns[i];
+        if(b.id === 'zed-settings-tab-btn') continue;
+        if((b.className||'').indexOf('bg-[var(--text)]') !== -1){
+          var tx = norm(b.textContent);
+          if(tx) lastRealTab = tx;
+          break;
         }
       }
-    }catch(err){}
+    }catch(e){}
+    settingsActive = true;
+    document.body.classList.add('zed-settings-tab-open');
+    ensureSettingsButton();
+    refreshTabBarState();
+    openSheet();
+    try{ window.scrollTo(0,0); }catch(e){}
+    cleanForbidden();
+  }
+  function deactivateSettingsTab(){
+    if(!settingsActive) return;
+    settingsActive = false;
+    document.body.classList.remove('zed-settings-tab-open');
+    clearFallback();
+    try{
+      var btns = getTabButtons();
+      for(var i=0;i<btns.length;i++){
+        var b = btns[i];
+        if(b.id === 'zed-settings-tab-btn'){ setBtnActive(b, false); }
+        else if(norm(b.textContent) === lastRealTab){ setBtnActive(b, true); }
+      }
+    }catch(e){}
+    try{ window.scrollTo(0,0); }catch(e){}
+  }
+  function ensureSettingsButton(){
+    var bar = getTabBar();
+    if(!bar) return null;
+    var ex = bar.querySelector('#zed-settings-tab-btn');
+    if(ex) return ex;
+    var btn = document.createElement('button');
+    btn.id = 'zed-settings-tab-btn';
+    btn.type = 'button';
+    btn.textContent = 'Settings';
+    btn.setAttribute('data-zed-tab', 'settings');
+    setBtnActive(btn, settingsActive);
+    btn.addEventListener('click', function(e){
+      try{ e.preventDefault(); e.stopPropagation(); }catch(_){}
+      activateSettingsTab();
+    });
+    var mlAuto = bar.querySelector('div.ml-auto');
+    if(mlAuto) bar.insertBefore(btn, mlAuto);
+    else bar.appendChild(btn);
+    return btn;
+  }
+  function scheduleSync(){
+    if(syncTimer) return;
+    syncTimer = setTimeout(function(){
+      syncTimer = null;
+      try{
+        if(!getTabBar()) return;
+        if(!getTabBar().querySelector('#zed-settings-tab-btn')) ensureSettingsButton();
+        // If user is in Settings tab and sheet vanished without a close (e.g. Forgot flow),
+        // stay in the tab - the sheet observer below handles close -> deactivate.
+        // Do NOT re-open here, or a deliberate close would instantly re-open.
+        if(settingsActive) cleanForbidden();
+      }catch(e){}
+    }, 250);
+  }
+
+  // Sheet closed (X / backdrop / Back / Forgot) -> leave the Settings tab
+  try{
+    var sheetObs = new MutationObserver(function(){
+      try{
+        if(!settingsActive) return;
+        if(opening) return;
+        if(!document.getElementById('zed-settings-modal') && !document.getElementById('zed-settings-tab-fallback')){
+          // Small delay: Forgot flow removes Settings sheet then opens Recovery - don't
+          // bounce back to last tab while Recovery is opening.
+          setTimeout(function(){
+            if(settingsActive && !document.getElementById('zed-settings-modal') && !document.getElementById('zed-recovery-modal') && !document.getElementById('zed-settings-tab-fallback')){
+              deactivateSettingsTab();
+            }
+          }, 250);
+        }
+      }catch(e){}
+    });
+    if(document.body) sheetObs.observe(document.body, {childList:true, subtree:true});
+  }catch(e){}
+
+  // Tapping any REAL tab while Settings tab is open: close the sheet + leave the tab
+  document.addEventListener('click', function(e){
+    try{
+      if(!settingsActive) return;
+      var b = e.target.closest && e.target.closest('button');
+      if(!b) return;
+      var bar = getTabBar();
+      if(!bar || !bar.contains(b)) return;
+      if(b.id === 'zed-settings-tab-btn') return;
+      // Close the sheet if it is open, then leave the tab.
+      // The sheet observer will also fire, but deactivate is idempotent.
+      var modal = document.getElementById('zed-settings-modal');
+      if(modal){ try{ modal.remove(); }catch(_){} }
+      deactivateSettingsTab();
+    }catch(_){}
   }, true);
-  window.addEventListener('resize', positionView);
-  window.addEventListener('orientationchange', function(){ setTimeout(positionView, 300); });
+
   setInterval(function(){
-    try{ ensureButton(); if(isOpen) positionView(); }catch(e){}
-  }, 800);
-  ensureButton();
-  console.log('[ZED] E-Statement Results tab active');
+    try{
+      if(getTabBar() && !getTabBar().querySelector('#zed-settings-tab-btn')) ensureSettingsButton();
+      if(settingsActive) cleanForbidden();
+    }catch(e){}
+  }, 1500);
+
+  try{
+    var mo = new MutationObserver(function(){ scheduleSync(); });
+    if(document.body) mo.observe(document.body, {childList:true, subtree:true});
+  }catch(e){}
+
+  setTimeout(function(){
+    try{
+      var el = document.getElementById('zed-loading-logo');
+      if(el) el.remove();
+    }catch(e){}
+  }, 5000);
+
+  console.log('[ZED] Settings tab active (Plan D - no move)');
 })();
 </script>
-</body>
 
+</body>
 </html>
