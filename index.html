@@ -2504,7 +2504,6 @@ input, select, textarea{ background:#1E1E1E !important; border:1px solid #C9A227
 #zed-chat-panel{ background:var(--bg) !important; }
 #zed-chat-head{ background:#0F2547 !important; border-bottom:1px solid var(--line) !important; }
 #zed-chat-tabs button{ border-radius:999px !important; font-weight:800 !important; }
-#zed-chat-tabs button
 
 /* Remove gradients / glows that made it messy */
 *{ background-image:none !important; }
@@ -3059,12 +3058,12 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
     modal.setAttribute('data-v2','1');
     modal.style.cssText='position:fixed;inset:0;z-index:9999999;background:#04101F;display:flex;flex-direction:column;';
     modal.innerHTML =
-      '<div style="height:52px;background:#1A1917;border-bottom:1px solid #2A2825;display:flex;align-items:center;justify-content:space-between;padding:0 12px;flex-shrink:0;">'
+      '<div style="height:52px;background:#0F2547;border-bottom:1px solid #C9A227;display:flex;align-items:center;justify-content:space-between;padding:0 12px;flex-shrink:0;">'
       + '<div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;"><div style="color:#F5F1E8;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+titleSafe+'</div>'
       + '<span style="font-size:8px;background:#E8C15A;color:#04101F;padding:3px 7px;border-radius:999px;font-weight:800;flex-shrink:0;">PDF VIEWER</span></div>'
       + '<button data-act="close" style="background:#F5F1E8;color:#000;border:none;width:32px;height:32px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;">✕</button></div>'
-      + '<div style="height:46px;background:#141312;border-bottom:1px solid #2A2825;display:flex;align-items:center;justify-content:space-between;padding:0 10px;gap:8px;flex-shrink:0;">'
-      + '<div style="display:flex;align-items:center;gap:6px;"><button data-act="prev" style="background:#1E3A5F;border:1px solid #223A5E;color:#04101F;width:36px;height:34px;border-radius:10px;cursor:pointer;font-size:16px;font-weight:700;">‹</button>'
+      + '<div style="height:46px;background:#0F2547;border-bottom:1px solid #C9A227;display:flex;align-items:center;justify-content:space-between;padding:0 10px;gap:8px;flex-shrink:0;">'
+      + '<div style="display:flex;align-items:center;gap:6px;"><button data-act="prev" style="background:#1E3A5F;border:1px solid #223A5E;color:#fff;width:36px;height:34px;border-radius:10px;cursor:pointer;font-size:16px;font-weight:700;">‹</button>'
       + '<div style="background:#0F2547;border:1px solid #1E3A5F;border-radius:10px;padding:0 8px;height:34px;display:flex;align-items:center;gap:6px;"><input data-act="page-input" type="number" min="1" value="1" style="width:44px;background:transparent;border:none;color:#F5F1E8;text-align:center;font-size:12px;font-weight:700;outline:none;"><span style="color:#6B6763;font-size:11px;">/</span><span data-act="page-total" style="color:#F5F1E8;font-size:12px;font-weight:700;min-width:20px;text-align:center;">–</span></div>'
       + '<button data-act="next" style="background:#1E3A5F;border:1px solid #223A5E;color:#F5F1E8;width:36px;height:34px;border-radius:10px;cursor:pointer;font-size:16px;font-weight:700;">›</button></div>'
       + '<div style="display:flex;align-items:center;gap:6px;"><button data-act="zoom-out" style="background:#1E3A5F;border:1px solid #223A5E;color:#F5F1E8;width:36px;height:34px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;">−</button>'
@@ -3072,11 +3071,11 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
       + '<button data-act="zoom-in" style="background:#1E3A5F;border:1px solid #223A5E;color:#F5F1E8;width:36px;height:34px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;">+</button>'
       + '<button data-act="fit" style="background:#0F2547;border:1px solid #E8C15A;color:#A9B8D0;height:34px;padding:0 12px;border-radius:10px;font-size:10px;font-weight:800;cursor:pointer;letter-spacing:0.05em;">FIT</button>'
       + '<button data-act="rotate" style="background:#1E3A5F;border:1px solid #223A5E;color:#9A9590;height:34px;padding:0 10px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;">↻ ROTATE</button></div></div>'
-      + '<div data-act="container" style="flex:1;overflow:auto;background:#0F0E0D;display:block;padding:12px 12px 32px;-webkit-overflow-scrolling:touch;position:relative;overscroll-behavior:contain;scroll-behavior:auto;">'
+      + '<div data-act="container" style="flex:1;overflow:auto;background:#04101F;display:block;padding:12px 12px 32px;-webkit-overflow-scrolling:touch;position:relative;overscroll-behavior:contain;scroll-behavior:auto;">'
       + '<div data-act="pages" style="display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;margin:0 auto;"></div>'
-      + '<div data-act="loader" style="position:absolute;top:34%;left:50%;transform:translate(-50%,-50%);background:#1A1917;border:1px solid #2A2825;padding:22px 26px;border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:12px;z-index:10;"><div style="width:34px;height:34px;border:3px solid #1E3A5F;border-top-color:#A9B8D0;border-radius:50%;animation:zedPdfSpin 0.7s linear infinite;"></div><div style="color:#04101F;font-size:13px;font-weight:600;">Loading PDF</div></div>'
+      + '<div data-act="loader" style="position:absolute;top:34%;left:50%;transform:translate(-50%,-50%);background:#0F2547;border:1px solid #C9A227;padding:22px 26px;border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:12px;z-index:10;"><div style="width:34px;height:34px;border:3px solid #1E3A5F;border-top-color:#A9B8D0;border-radius:50%;animation:zedPdfSpin 0.7s linear infinite;"></div><div style="color:#FFFFFF;font-size:13px;font-weight:600;">Loading PDF</div></div>'
       + '<style>@keyframes zedPdfSpin{to{transform:rotate(360deg)}}</style></div>'
-      + '<div style="height:34px;background:#1A1917;border-top:1px solid #2A2825;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="color:#6B6763;font-size:10px;">Scroll to read • Pinch to zoom • Swipe up / down</span></div>';
+      + '<div style="height:34px;background:#0F2547;border-top:1px solid #C9A227;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="color:#6B6763;font-size:10px;">Scroll to read • Pinch to zoom • Swipe up / down</span></div>';
     document.body.appendChild(modal);
     try{ document.body.style.overflow='hidden'; }catch(e){}
 
@@ -3857,7 +3856,7 @@ function showZedUpdateToast(){
   if(document.getElementById('zed-update-toast')) return;
   let toast = document.createElement('div');
   toast.id = 'zed-update-toast';
-  toast.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1A1917;border:2px solid #E8C15A;color:#04101F;padding:16px 20px;border-radius:16px;font-size:13px;z-index:9999999;box-shadow:0 12px 40px rgba(0,0,0,0.6);max-width:90vw;text-align:center;font-family:"Bricolage Grotesque",sans-serif;font-weight:600;animation:zedSlideUp 0.4s ease;';
+  toast.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#0F2547;border:2px solid #C9A227;color:#FFFFFF;padding:16px 20px;border-radius:16px;font-size:13px;z-index:9999999;box-shadow:0 12px 40px rgba(0,0,0,0.6);max-width:90vw;text-align:center;font-family:"Bricolage Grotesque",sans-serif;font-weight:600;animation:zedSlideUp 0.4s ease;';
   toast.innerHTML = '<div style="display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:10px;"><span style="font-size:18px;">✨</span><span style="font-weight:800;letter-spacing:0.3px;">New update is available</span></div><button id="zed-update-btn" style="background:#E8C15A;color:#04101F;border:none;padding:10px 18px;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;width:100%;">Update</button>';
   // Add animation
   let style = document.createElement('style');
@@ -5866,7 +5865,7 @@ window.zedVerifyAdminCode = async function(code){
     <div id="zed-chat-view" style="display:none;flex:1;flex-direction:column">
       <div id="zed-chat-view-head" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#0F2547;border-bottom:1px solid #C9A227">
         <button id="zed-chat-view-back" type="button" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer">‹</button>
-        <div id="zed-chat-view-avatar" title="Tap to view profile" style="width:40px;height:40px;min-width:40px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:16px;border:2px solid #E8C15A;cursor:pointer;display:none"></div><div id="zed-chat-view-name" style="flex:1;font-weight:800;color:#04101F;font-size:15px;cursor:pointer" title="Tap to view profile"></div>
+        <div id="zed-chat-view-avatar" title="Tap to view profile" style="width:40px;height:40px;min-width:40px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:16px;border:2px solid #E8C15A;cursor:pointer;display:none"></div><div id="zed-chat-view-name" style="flex:1;font-weight:800;color:#fff;font-size:15px;cursor:pointer" title="Tap to view profile"></div>
         <div style="font-size:11px;color:#FF9A9A">⏳ Deletes in 48hrs</div>
       </div>
       <div id="zed-chat-msgs"></div>
@@ -5941,6 +5940,8 @@ window.zedVerifyAdminCode = async function(code){
         if(Array.isArray(rRows)){
           var outS={}, inS={}; rRows.forEach(function(r){ if(r.user_id===me.id) outS[r.friend_id]=true; if(r.friend_id===me.id) inS[r.user_id]=true; });
           var pendingIn=rRows.filter(function(r){ return r.friend_id===me.id && !outS[r.user_id]; });
+          // Dedup badge too: duplicate rows for the same person counted as 2 before.
+          var _seenBadge={}; pendingIn=pendingIn.filter(function(r){ if(_seenBadge[r.user_id]) return false; _seenBadge[r.user_id]=true; return true; });
           total += pendingIn.length;
           rRows = pendingIn; // for badge below
         } else { rRows=[]; }
@@ -5984,9 +5985,9 @@ window.zedVerifyAdminCode = async function(code){
     [chatsTab, friendsTab, reqTab].forEach(function(b){ if(b){ b.style.background='#0F2547'; b.style.color='#fff'; b.style.border='1px solid #C9A227'; }});
     listEl.style.display='none'; if(friendsList) friendsList.style.display='none'; if(reqList) reqList.style.display='none';
     viewEl.style.display='none';
-    if(tab==='chats'){ listEl.style.display='block'; if(chatsTab){ chatsTab.style.background='#E8C15A'; chatsTab.style.color='#fff'; chatsTab.style.border='none'; } loadFriends(); }
-    if(tab==='friends'){ if(friendsList) friendsList.style.display='block'; if(friendsTab){ friendsTab.style.background='#E8C15A'; friendsTab.style.color='#fff'; friendsTab.style.border='none'; } loadFriendsListTab(); }
-    if(tab==='requests'){ if(reqList) reqList.style.display='block'; if(reqTab){ reqTab.style.background='#E8C15A'; reqTab.style.color='#fff'; reqTab.style.border='none'; } loadRequestsTab(); }
+    if(tab==='chats'){ listEl.style.display='block'; if(chatsTab){ chatsTab.style.background='#E8C15A'; chatsTab.style.color='#04101F'; chatsTab.style.border='none'; } loadFriends(); }
+    if(tab==='friends'){ if(friendsList) friendsList.style.display='block'; if(friendsTab){ friendsTab.style.background='#E8C15A'; friendsTab.style.color='#04101F'; friendsTab.style.border='none'; } loadFriendsListTab(); }
+    if(tab==='requests'){ if(reqList) reqList.style.display='block'; if(reqTab){ reqTab.style.background='#E8C15A'; reqTab.style.color='#04101F'; reqTab.style.border='none'; } loadRequestsTab(); }
   }
   // Bind tabs after panel is in DOM
   setTimeout(function(){
@@ -6008,7 +6009,7 @@ window.zedVerifyAdminCode = async function(code){
         _fc.friends.forEach(function(f){
           var _row=document.createElement('div'); _row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid #C9A227';
           var _av=(f.avatar||f.avatar_url||'');
-          _row.innerHTML='<div style="display:flex;gap:10px;align-items:center;flex:1;min-width:0;cursor:pointer" class="zed-friends-person"><div class="zed-friends-avatar" data-profile-id="'+(f.id||'')+'" title="Tap to view profile pic" style="position:relative;width:48px;height:48px;min-width:48px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;border:2px solid #E8C15A;cursor:pointer">'+(_av?'<img src="'+_av+'" style="width:100%;height:100%;object-fit:cover" />':(f.name||'S')[0])+'</div><div style="min-width:0"><div style="font-weight:800;color:#04101F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(f.name||'Student')+'</div><div style="font-size:12px;color:#A9B8D0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(f.school||'')+' • '+(f.grade||'')+'</div></div></div><button style="background:#E8C15A;color:#04101F;border:none;border-radius:999px;padding:8px 14px;font-weight:900;font-size:12px;cursor:pointer;min-width:72px">CHAT →</button>';
+          _row.innerHTML='<div style="display:flex;gap:10px;align-items:center;flex:1;min-width:0;cursor:pointer" class="zed-friends-person"><div class="zed-friends-avatar" data-profile-id="'+(f.id||'')+'" title="Tap to view profile pic" style="position:relative;width:48px;height:48px;min-width:48px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;border:2px solid #E8C15A;cursor:pointer">'+(_av?'<img src="'+_av+'" style="width:100%;height:100%;object-fit:cover" />':(f.name||'S')[0])+'</div><div style="min-width:0"><div style="font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(f.name||'Student')+'</div><div style="font-size:12px;color:#A9B8D0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(f.school||'')+' • '+(f.grade||'')+'</div></div></div><button style="background:#E8C15A;color:#04101F;border:none;border-radius:999px;padding:8px 14px;font-weight:900;font-size:12px;cursor:pointer;min-width:72px">CHAT →</button>';
           (function(_f,_r){ _r.querySelector('button').addEventListener('click', function(ev){ ev.stopPropagation(); switchChatTab('chats'); setTimeout(function(){ showView(_f); }, 100); }); var _pers=_r.querySelector('.zed-friends-person'); if(_pers) _pers.addEventListener('click', function(ev){ if(ev.target.closest && ev.target.closest('button')) return; var _avEl=ev.target.closest && ev.target.closest('.zed-friends-avatar'); if(_avEl){ ev.stopPropagation(); if(window.zedOpenProfilePic) window.zedOpenProfilePic(_f); return; } if(window.zedOpenUserProfile) window.zedOpenUserProfile(_f,{friendStatus:{status:'accepted',dir:'both'}}); }); })(f,_row);
           _tmp.appendChild(_row);
         });
@@ -6036,7 +6037,7 @@ window.zedVerifyAdminCode = async function(code){
       (friends||[]).forEach(function(f){
         var row=document.createElement('div');
         row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid #C9A227';
-        row.innerHTML='<div class="zed-friends-person" style="display:flex;gap:10px;align-items:center;flex:1;min-width:0;cursor:pointer"><div class="zed-friends-avatar" data-profile-id="'+(f.id||'')+'" title="Tap to view profile pic" style="position:relative;width:48px;height:48px;min-width:48px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;border:2px solid #E8C15A;cursor:pointer">'+((f.avatar||f.avatar_url)?'<img src="'+(f.avatar||f.avatar_url)+'" style="width:100%;height:100%;object-fit:cover" />':(f.name||'S')[0])+'</div><div style="min-width:0"><div style="font-weight:800;color:#04101F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(f.name||'Student')+'</div><div style="font-size:12px;color:#A9B8D0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(f.school||'')+' • '+(f.grade||'')+'</div></div></div><button style="background:#E8C15A;color:#04101F;border:none;border-radius:999px;padding:8px 14px;font-weight:900;font-size:12px;cursor:pointer;min-width:72px">CHAT →</button>';
+        row.innerHTML='<div class="zed-friends-person" style="display:flex;gap:10px;align-items:center;flex:1;min-width:0;cursor:pointer"><div class="zed-friends-avatar" data-profile-id="'+(f.id||'')+'" title="Tap to view profile pic" style="position:relative;width:48px;height:48px;min-width:48px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;border:2px solid #E8C15A;cursor:pointer">'+((f.avatar||f.avatar_url)?'<img src="'+(f.avatar||f.avatar_url)+'" style="width:100%;height:100%;object-fit:cover" />':(f.name||'S')[0])+'</div><div style="min-width:0"><div style="font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(f.name||'Student')+'</div><div style="font-size:12px;color:#A9B8D0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(f.school||'')+' • '+(f.grade||'')+'</div></div></div><button style="background:#E8C15A;color:#04101F;border:none;border-radius:999px;padding:8px 14px;font-weight:900;font-size:12px;cursor:pointer;min-width:72px">CHAT →</button>';
         (function(_f,_r){ var _pers=_r.querySelector('.zed-friends-person'); if(_pers) _pers.addEventListener('click', function(ev){ var _avEl=ev.target.closest && ev.target.closest('.zed-friends-avatar'); if(_avEl){ ev.stopPropagation(); if(window.zedOpenProfilePic) window.zedOpenProfilePic(_f); return; } if(window.zedOpenUserProfile) window.zedOpenUserProfile(_f,{friendStatus:{status:'accepted',dir:'both'}}); }); })(f,row);
         row.querySelector('button').addEventListener('click', function(){ switchChatTab('chats'); setTimeout(function(){ showView(f); }, 100); });
         friendsList.appendChild(row);
@@ -6047,62 +6048,94 @@ window.zedVerifyAdminCode = async function(code){
   }
   // Load Requests tab: incoming + outgoing
   var _lastReqKey='';
+  // Load Requests tab: incoming + outgoing
+  var _lastReqKey='';
+  var _loadReqSeq=0;
+  var _loadReqBusy=false;
   async function loadRequestsTab(){
     var me=getMe(); if(!me) return;
     var reqList=document.getElementById('zed-chat-requests-list');
     if(!reqList) return;
+    // RACE FIX: loadFriends() already has this guard, loadRequestsTab did not.
+    // Without it, two overlapping loads (tap REQUESTS + 8s poll + showList + Accept/Decline)
+    // each cleared the list, then EACH appended one card for the same person = duplicate Lisulo.
+    // Now: if one load is still fetching profiles, the second call just returns.
+    if(_loadReqBusy) return;
+    _loadReqBusy=true;
+    var mySeq=++_loadReqSeq;
     var _hadContent = reqList.innerHTML.trim().length>0 && reqList.innerHTML.indexOf('Loading requests')===-1;
     if(!_hadContent){ reqList.innerHTML='<div style="padding:16px;color:#A9B8D0;text-align:center">Loading requests...</div>'; }
     try{
       var allRows=await fetchFriendships(me);
+      if(mySeq!==_loadReqSeq){ _loadReqBusy=false; return; } // stale — a newer load took over, do not append
       if(!Array.isArray(allRows)){ allRows=[]; }
       var outSet2={}, inSet2={};
       allRows.forEach(function(r){ if(r.user_id===me.id) outSet2[r.friend_id]=true; if(r.friend_id===me.id) inSet2[r.user_id]=true; });
       var incoming=allRows.filter(function(r){ return r.friend_id===me.id && !outSet2[r.user_id]; });
       var outgoing=allRows.filter(function(r){ return r.user_id===me.id && !inSet2[r.friend_id]; });
-      // FIX: one card per person — duplicate friendship rows used to show the same person twice
+      // DEDUP 1 — by friendship row: same person can have 2 identical rows in Supabase
+      // (double-tap ADD / ADD in Search + ADD in Profile). One card per person.
       var _seenIn={}, _seenOut={};
       incoming=incoming.filter(function(r){ if(_seenIn[r.user_id]) return false; _seenIn[r.user_id]=true; return true; });
       outgoing=outgoing.filter(function(r){ if(_seenOut[r.friend_id]) return false; _seenOut[r.friend_id]=true; return true; });
-      try{
-        var _rk = (incoming.map(function(r){return r.user_id;}).sort().join(',')) + '|' + (outgoing.map(function(r){return r.friend_id;}).sort().join(','));
-        if(_rk===_lastReqKey && _hadContent){ return; }
-        _lastReqKey=_rk;
-      }catch(e){}
-      reqList.innerHTML='';
+      var _rk = (incoming.map(function(r){return r.user_id;}).sort().join(',')) + '|' + (outgoing.map(function(r){return r.friend_id;}).sort().join(','));
+      // _lastReqKey is now ONLY the last *rendered* key, not the last *started* key.
+      // Old code set it before rendering, so the 2nd overlapping call saw an empty list,
+      // thought _hadContent was false, and rendered again anyway.
+      if(_rk===_lastReqKey && _hadContent){ _loadReqBusy=false; return; }
+      // Build everything in a detached div, swap ONCE at the end (same pattern as loadFriends).
+      // Old code did reqList.innerHTML='' at the start, then appended one card per await —
+      // so two overlapping loads interleaved their appends into the same live list.
+      var renderEl=document.createElement('div');
       if(incoming.length===0 && outgoing.length===0){
-        reqList.innerHTML='<div style="padding:20px;color:#A9B8D0;text-align:center">No friend requests yet.<br/>When someone sends you a request, it will show here.<br/><br/><button id="zed-req-refresh" style="background:#E8C15A;color:#04101F;border:none;border-radius:999px;padding:9px 16px;font-weight:900;cursor:pointer">Refresh Requests</button></div>';
-        return;
-      }
-      if(incoming.length>0){
-        var h=document.createElement('div'); h.style.cssText='padding:12px;font-weight:900;color:#E8C15A'; h.textContent='👥 REQUESTS FOR YOU ('+incoming.length+') — Tap ACCEPT to chat';
-        reqList.appendChild(h);
-        for(var i=0;i<incoming.length;i++){
-          var sid=incoming[i].user_id;
-          var resP=await fetch(SUPA_URL+'/rest/v1/profiles?select=id,name,school,grade,province,district,avatar,avatar_url,coins,streak,created_at&id=eq.'+sid, {headers:headers()});
-          var pRows=await resP.json(); var p=pRows && pRows[0] ? pRows[0] : {name:'Student'};
-          var card=document.createElement('div');
-          card.style.cssText='display:flex;justify-content:space-between;align-items:center;background:#0F2547;border:1px solid #E8C15A;border-radius:12px;padding:12px;margin:0 12px 10px';
-          card.innerHTML='<div class="zed-req-person" data-zed-profile-id="'+(p.id||'')+'" data-zed-dir="in" title="Tap to view profile" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer"><div class="zed-friends-avatar" data-profile-id="'+(p.id||'')+'" title="Tap to view profile pic" style="width:44px;height:44px;min-width:44px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#04101F;font-size:16px;border:2px solid #E8C15A;cursor:pointer">'+((p.avatar||p.avatar_url)?'<img src="'+(p.avatar||p.avatar_url)+'" style="width:100%;height:100%;object-fit:cover" />':(p.name||'S')[0])+'</div><div style="min-width:0"><div style="font-weight:700;color:#fff;font-size:13px;line-height:1.2;white-space:normal;word-break:keep-all;overflow-wrap:normal">'+(p.name||'Student')+'</div><div style="font-size:11px;color:#A9B8D0;line-height:1.2;white-space:normal;word-break:keep-all;overflow-wrap:normal">'+(p.school||'')+' \u2022 '+(p.grade||'')+'</div><div style="font-size:11px;color:#A9B8D0;white-space:nowrap">Tap to view profile</div></div></div><div style="display:flex;gap:6px"><button data-act="accept" style="background:#E8C15A;color:#04101F;border:none;border-radius:999px;padding:8px 12px;font-weight:900;font-size:12px">ACCEPT</button><button data-act="decline" style="background:#14315A;color:#fff;border:none;border-radius:999px;padding:8px 12px;font-weight:900;font-size:12px">DECLINE</button></div>';
-          (function(sid2, cardEl){
-            cardEl.querySelector('[data-act="accept"]').addEventListener('click', async function(){ await fetch(SUPA_URL+'/rest/v1/friendships', {method:'POST', headers:headers(), body: JSON.stringify({user_id:me.id, friend_id:sid2})}); loadRequestsTab(); loadFriends(); updateChatBadge(); });
-            cardEl.querySelector('[data-act="decline"]').addEventListener('click', async function(){ await fetch(SUPA_URL+'/rest/v1/friendships?user_id=eq.'+sid2+'&friend_id=eq.'+me.id, {method:'DELETE', headers:headers()}); loadRequestsTab(); loadFriends(); updateChatBadge(); });
-          })(sid, card);
-          reqList.appendChild(card);
+        renderEl.innerHTML='<div style="padding:20px;color:#A9B8D0;text-align:center">No friend requests yet.<br/>When someone sends you a request, it will show here.<br/><br/><button id="zed-req-refresh" style="background:#E8C15A;color:#04101F;border:none;border-radius:999px;padding:9px 16px;font-weight:900;cursor:pointer">Refresh Requests</button></div>';
+        var _rb=renderEl.querySelector('#zed-req-refresh'); if(_rb){ _rb.addEventListener('click', function(){ _lastReqKey=''; loadRequestsTab(); }); }
+      } else {
+        if(incoming.length>0){
+          var h=document.createElement('div'); h.style.cssText='padding:12px;font-weight:900;color:#E8C15A'; h.textContent='👥 REQUESTS FOR YOU ('+incoming.length+') — Tap ACCEPT to chat';
+          renderEl.appendChild(h);
+          var _seenProfileIn={};
+          for(var i=0;i<incoming.length;i++){
+            if(mySeq!==_loadReqSeq){ _loadReqBusy=false; return; }
+            var sid=incoming[i].user_id;
+            var resP=await fetch(SUPA_URL+'/rest/v1/profiles?select=id,name,school,grade,province,district,avatar,avatar_url,coins,streak,created_at&id=eq.'+sid, {headers:headers()});
+            var pRows=await resP.json(); var p=pRows && pRows[0] ? pRows[0] : {name:'Student'};
+            // DEDUP 2 — by resolved profile id: if two rows ever resolve to the same profile, keep one card.
+            var _pidIn=p.id||sid; if(_seenProfileIn[_pidIn]) continue; _seenProfileIn[_pidIn]=true;
+            var card=document.createElement('div');
+            card.style.cssText='display:flex;justify-content:space-between;align-items:center;background:#0F2547;border:1px solid #E8C15A;border-radius:12px;padding:12px;margin:0 12px 10px';
+            card.innerHTML='<div class="zed-req-person" data-zed-profile-id="'+(p.id||'')+'" data-zed-dir="in" title="Tap to view profile" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer"><div class="zed-friends-avatar" data-profile-id="'+(p.id||'')+'" title="Tap to view profile pic" style="width:44px;height:44px;min-width:44px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:16px;border:2px solid #E8C15A;cursor:pointer">'+((p.avatar||p.avatar_url)?'<img src="'+(p.avatar||p.avatar_url)+'" style="width:100%;height:100%;object-fit:cover" />':(p.name||'S')[0])+'</div><div style="min-width:0"><div style="font-weight:700;color:#fff;font-size:13px;line-height:1.2;white-space:normal;word-break:keep-all;overflow-wrap:normal">'+(p.name||'Student')+'</div><div style="font-size:11px;color:#A9B8D0;line-height:1.2;white-space:normal;word-break:keep-all;overflow-wrap:normal">'+(p.school||'')+' • '+(p.grade||'')+'</div><div style="font-size:11px;color:#A9B8D0;white-space:nowrap">Tap to view profile</div></div></div><div style="display:flex;gap:6px"><button data-act="accept" style="background:#E8C15A;color:#04101F;border:none;border-radius:999px;padding:8px 12px;font-weight:900;font-size:12px">ACCEPT</button><button data-act="decline" style="background:#14315A;color:#fff;border:none;border-radius:999px;padding:8px 12px;font-weight:900;font-size:12px">DECLINE</button></div>';
+            (function(sid2, cardEl){
+              cardEl.querySelector('[data-act="accept"]').addEventListener('click', async function(){ var _b=this; if(_b.disabled) return; _b.disabled=true; _b.textContent='Accepting...'; await fetch(SUPA_URL+'/rest/v1/friendships', {method:'POST', headers:headers(), body: JSON.stringify({user_id:me.id, friend_id:sid2})}); _lastReqKey=''; loadRequestsTab(); loadFriends(); updateChatBadge(); });
+              cardEl.querySelector('[data-act="decline"]').addEventListener('click', async function(){ var _b2=this; if(_b2.disabled) return; _b2.disabled=true; await fetch(SUPA_URL+'/rest/v1/friendships?user_id=eq.'+sid2+'&friend_id=eq.'+me.id, {method:'DELETE', headers:headers()}); _lastReqKey=''; loadRequestsTab(); loadFriends(); updateChatBadge(); });
+            })(sid, card);
+            renderEl.appendChild(card);
+          }
+        }
+        if(outgoing.length>0){
+          var _seenProfileOut={};
+          for(var j=0;j<outgoing.length;j++){
+            if(mySeq!==_loadReqSeq){ _loadReqBusy=false; return; }
+            var oid=outgoing[j].friend_id;
+            var resP2=await fetch(SUPA_URL+'/rest/v1/profiles?select=id,name,school,grade,province,district,avatar,avatar_url,coins,streak,created_at&id=eq.'+oid, {headers:headers()});
+            var pRows2=await resP2.json(); var p2=pRows2 && pRows2[0] ? pRows2[0] : {name:'Student'};
+            var _pidOut=p2.id||oid; if(_seenProfileOut[_pidOut]) continue; _seenProfileOut[_pidOut]=true;
+            var card2=document.createElement('div');
+            card2.style.cssText='display:flex;gap:8px;align-items:center;background:#0F2547;border:1px solid #C9A227;border-radius:12px;padding:8px;margin:0 10px 8px';
+            card2.innerHTML='<div class="zed-req-person" data-zed-profile-id="'+(p2.id||'')+'" data-zed-dir="out" title="Tap to view profile" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer"><div class="zed-friends-avatar" data-profile-id="'+(p2.id||'')+'" title="Tap to view profile pic" style="width:44px;height:44px;min-width:44px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:16px;border:2px solid #E8C15A;cursor:pointer">'+((p2.avatar||p2.avatar_url)?'<img src="'+(p2.avatar||p2.avatar_url)+'" style="width:100%;height:100%;object-fit:cover" />':(p2.name||'S')[0])+'</div><div style="min-width:0;flex:1"><div style="font-weight:700;color:#fff;font-size:13px;line-height:1.2;white-space:normal;word-break:keep-all;overflow-wrap:normal">'+(p2.name||'Student')+'</div><div style="font-size:11px;color:#A9B8D0;line-height:1.2;white-space:normal;word-break:keep-all;overflow-wrap:normal">'+(p2.school||'')+'</div><div style="font-size:11px;color:#A9B8D0;white-space:nowrap">Tap to view profile</div></div></div><span style="background:#14315A;color:#A9B8D0;border-radius:999px;padding:5px 7px;font-size:10px;font-weight:900;white-space:nowrap;flex-shrink:0">✓ REQUEST SENT</span>';
+            renderEl.appendChild(card2);
+          }
         }
       }
-      if(outgoing.length>0){
-        for(var j=0;j<outgoing.length;j++){
-          var oid=outgoing[j].friend_id;
-          var resP2=await fetch(SUPA_URL+'/rest/v1/profiles?select=id,name,school,grade,province,district,avatar,avatar_url,coins,streak,created_at&id=eq.'+oid, {headers:headers()});
-          var pRows2=await resP2.json(); var p2=pRows2 && pRows2[0] ? pRows2[0] : {name:'Student'};
-          var card2=document.createElement('div');
-          card2.style.cssText='display:flex;gap:8px;align-items:center;background:#0F2547;border:1px solid #C9A227;border-radius:12px;padding:8px;margin:0 10px 8px';
-          card2.innerHTML='<div class="zed-req-person" data-zed-profile-id="'+(p2.id||'')+'" data-zed-dir="out" title="Tap to view profile" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer"><div class="zed-friends-avatar" data-profile-id="'+(p2.id||'')+'" title="Tap to view profile pic" style="width:44px;height:44px;min-width:44px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:16px;border:2px solid #E8C15A;cursor:pointer">'+((p2.avatar||p2.avatar_url)?'<img src="'+(p2.avatar||p2.avatar_url)+'" style="width:100%;height:100%;object-fit:cover" />':(p2.name||'S')[0])+'</div><div style="min-width:0;flex:1"><div style="font-weight:700;color:#04101F;font-size:13px;line-height:1.2;white-space:normal;word-break:keep-all;overflow-wrap:normal">'+(p2.name||'Student')+'</div><div style="font-size:11px;color:#A9B8D0;line-height:1.2;white-space:normal;word-break:keep-all;overflow-wrap:normal">'+(p2.school||'')+'</div><div style="font-size:11px;color:#A9B8D0;white-space:nowrap">Tap to view profile</div></div></div><span style="background:#14315A;color:#A9B8D0;border-radius:999px;padding:5px 7px;font-size:10px;font-weight:900;white-space:nowrap;flex-shrink:0">✓ REQUEST SENT</span>';
-          reqList.appendChild(card2);
-        }
+      if(mySeq!==_loadReqSeq){ _loadReqBusy=false; return; }
+      _lastReqKey=_rk;
+      _loadReqBusy=false;
+      // Single atomic swap — and skip it entirely if nothing changed (no flicker, no duplicate append).
+      if(renderEl.innerHTML!==reqList.innerHTML){
+        reqList.innerHTML='';
+        while(renderEl.firstChild) reqList.appendChild(renderEl.firstChild);
       }
-    }catch(e){ reqList.innerHTML='<div style="padding:20px;color:#A9B8D0;text-align:center">No requests.</div>'; }
+    }catch(e){ if(mySeq===_loadReqSeq){ reqList.innerHTML='<div style="padding:20px;color:#A9B8D0;text-align:center">No requests.</div>'; } _loadReqBusy=false; }
   }
   function showList(){
     viewEl.style.display='none';
@@ -6214,11 +6247,17 @@ window.zedVerifyAdminCode = async function(code){
         } else {
           btnHtml='<button disabled style="background:#0F2547;color:#A9B8D0;border:1px solid #E8C15A;border-radius:999px;padding:7px 12px;font-weight:900;font-size:12px">✓ FRIENDS</button>';
         }
-        d.innerHTML='<div class="zed-search-person" data-zed-status="'+(st?st.status:'none')+'" data-zed-dir="'+(st?st.dir:'')+'" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer"><div class="zed-search-avatar" data-profile-id="'+r.id+'" style="width:48px;height:48px;min-width:48px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;border:2px solid #E8C15A">'+((r.avatar||r.avatar_url)?'<img src="'+(r.avatar||r.avatar_url)+'" style="width:100%;height:100%;object-fit:cover" />':(r.name||'S')[0])+'</div><div style="min-width:0"><div style="font-weight:800;color:#04101F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(r.name||'Student')+'</div><div style="font-size:12px;color:#A9B8D0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(r.school||'')+' \u2022 Grade '+(r.grade||'')+'</div></div></div>'+btnHtml;
+        d.innerHTML='<div class="zed-search-person" data-zed-status="'+(st?st.status:'none')+'" data-zed-dir="'+(st?st.dir:'')+'" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer"><div class="zed-search-avatar" data-profile-id="'+r.id+'" style="width:48px;height:48px;min-width:48px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;border:2px solid #E8C15A">'+((r.avatar||r.avatar_url)?'<img src="'+(r.avatar||r.avatar_url)+'" style="width:100%;height:100%;object-fit:cover" />':(r.name||'S')[0])+'</div><div style="min-width:0"><div style="font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(r.name||'Student')+'</div><div style="font-size:12px;color:#A9B8D0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(r.school||'')+' \u2022 Grade '+(r.grade||'')+'</div></div></div>'+btnHtml;
         var _person=d.querySelector('.zed-search-person'); if(_person){ (function(_r,_st){ _person.addEventListener('click', function(e){ e.stopPropagation(); if(window.zedOpenUserProfile) window.zedOpenUserProfile(_r, {friendStatus:_st}); }); })(r, st); }
         var btn=d.querySelector('button');
         if(!st){
           btn.addEventListener('click', async function(){
+            // DOUBLE-SEND GUARD: ADD in Search + ADD in Profile could both POST the same row.
+            // If this phone already sent it, or a send is already in flight, do not POST again.
+            if(btn.disabled) return;
+            try{ if(getSentRequests().indexOf(r.id)!==-1){ btn.textContent='✓ REQUEST SENT'; btn.disabled=true; return; } }catch(e){}
+            if(window._zedSendingReq && window._zedSendingReq[r.id]) return;
+            window._zedSendingReq=window._zedSendingReq||{}; window._zedSendingReq[r.id]=true;
             var origText=btn.textContent;
             btn.textContent='Sending...'; btn.disabled=true;
             try{
@@ -6236,10 +6275,12 @@ window.zedVerifyAdminCode = async function(code){
                 // REAL FAILURE - don't fake it, show it so you can fix it
                 var errObj=null; try{ errObj=await resp.json(); }catch(e){}
                 var errMsg=(errObj && errObj.message) ? errObj.message : ('Error '+resp.status);
+                try{ if(window._zedSendingReq) delete window._zedSendingReq[r.id]; }catch(_e){}
                 btn.textContent='⚠️ FAILED - Tap to retry'; btn.disabled=false; btn.style.background='#FF3B30'; btn.style.color='#fff';
                 alert('Request did NOT send. Server says: '+errMsg+'\n\nPlease try again. Do NOT use the old file from Downloads - use Vercel link.');
               }
             }catch(e){
+              try{ if(window._zedSendingReq) delete window._zedSendingReq[r.id]; }catch(_e){}
               btn.textContent='⚠️ FAILED - Tap to retry'; btn.disabled=false; btn.style.background='#FF3B30'; btn.style.color='#fff';
             }
           });
@@ -6259,7 +6300,7 @@ window.zedVerifyAdminCode = async function(code){
       try{
         var _pc=zedCacheGet('zed_profiles_cache_v1')||{profiles:[]}; var _q=q.toLowerCase();
         var _rows=(_pc.profiles||[]).filter(function(r){ return (r.name||'').toLowerCase().indexOf(_q)!==-1 || (r.school||'').toLowerCase().indexOf(_q)!==-1; });
-        if(_rows.length){ resEl.innerHTML=''; /* No banner */ _rows.slice(0,10).forEach(function(r){ var _d=document.createElement('div'); _d.style.cssText='display:flex;justify-content:space-between;align-items:center;background:#0F2547;border:1px solid #C9A227;border-radius:10px;padding:10px;gap:10px'; var _av=(r.avatar||r.avatar_url||''); _d.innerHTML='<div class="zed-search-person" data-zed-status="none" data-zed-dir="" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer"><div class="zed-search-avatar" data-profile-id="'+(r.id||'')+'" style="width:48px;height:48px;min-width:48px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;border:2px solid #E8C15A">'+(_av?'<img src="'+_av+'" style="width:100%;height:100%;object-fit:cover" />':(r.name||'S')[0])+'</div><div style="min-width:0"><div style="font-weight:800;color:#04101F">'+(r.name||'Student')+'</div><div style="font-size:12px;color:#A9B8D0">'+(r.school||'')+' • Grade '+(r.grade||'')+'</div></div></div>'; (function(_r){ var _pp=_d.querySelector('.zed-search-person'); if(_pp) _pp.addEventListener('click', function(ev){ ev.stopPropagation(); if(window.zedOpenProfilePic) window.zedOpenProfilePic(_r); }); })(r); resEl.appendChild(_d); }); return; }
+        if(_rows.length){ resEl.innerHTML=''; /* No banner */ _rows.slice(0,10).forEach(function(r){ var _d=document.createElement('div'); _d.style.cssText='display:flex;justify-content:space-between;align-items:center;background:#0F2547;border:1px solid #C9A227;border-radius:10px;padding:10px;gap:10px'; var _av=(r.avatar||r.avatar_url||''); _d.innerHTML='<div class="zed-search-person" data-zed-status="none" data-zed-dir="" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer"><div class="zed-search-avatar" data-profile-id="'+(r.id||'')+'" style="width:48px;height:48px;min-width:48px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;border:2px solid #E8C15A">'+(_av?'<img src="'+_av+'" style="width:100%;height:100%;object-fit:cover" />':(r.name||'S')[0])+'</div><div style="min-width:0"><div style="font-weight:800;color:#fff">'+(r.name||'Student')+'</div><div style="font-size:12px;color:#A9B8D0">'+(r.school||'')+' • Grade '+(r.grade||'')+'</div></div></div>'; (function(_r){ var _pp=_d.querySelector('.zed-search-person'); if(_pp) _pp.addEventListener('click', function(ev){ ev.stopPropagation(); if(window.zedOpenProfilePic) window.zedOpenProfilePic(_r); }); })(r); resEl.appendChild(_d); }); return; }
       }catch(_e){}
       resEl.innerHTML='<div style="color:#A9B8D0;font-size:13px">No student found for "'+q+'". Try full name or school.</div>'; }
   });
@@ -6301,7 +6342,7 @@ window.zedVerifyAdminCode = async function(code){
         var timeStr=''; if(lastMsg && lastMsg.created_at){ var dd=new Date(lastMsg.created_at); timeStr=dd.getHours()+':'+String(dd.getMinutes()).padStart(2,'0'); }
         var row=document.createElement('div'); row.className='zed-chat-friend';
         var av=(f.avatar||f.avatar_url||'');
-        row.innerHTML='<div class="zed-chat-avatar" data-profile-id="'+(f.id||'')+'" title="Tap to view profile pic" style="position:relative;width:44px;height:44px;min-width:44px;border-radius:999px;overflow:visible;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;border:2px solid #E8C15A;cursor:pointer"><span style="display:flex;width:100%;height:100%;border-radius:999px;overflow:hidden;align-items:center;justify-content:center">'+(av?'<img src="'+av+'" style="width:100%;height:100%;object-fit:cover" />':(f.name||'S')[0])+'</span></div><div style="flex:1;min-width:0"><div style="font-weight:800;color:#04101F;font-size:15px;display:flex;justify-content:space-between;gap:8px"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(f.name||'Student')+'</span><span style="font-size:11px;color:#A9B8D0;font-weight:400">'+timeStr+'</span></div><div style="font-size:13px;color:#A9B8D0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg ? (isMeLast?'You: ':'')+lastMsg.text : (f.school||'')+' • '+(f.grade||''))+'</div></div>';
+        row.innerHTML='<div class="zed-chat-avatar" data-profile-id="'+(f.id||'')+'" title="Tap to view profile pic" style="position:relative;width:44px;height:44px;min-width:44px;border-radius:999px;overflow:visible;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;border:2px solid #E8C15A;cursor:pointer"><span style="display:flex;width:100%;height:100%;border-radius:999px;overflow:hidden;align-items:center;justify-content:center">'+(av?'<img src="'+av+'" style="width:100%;height:100%;object-fit:cover" />':(f.name||'S')[0])+'</span></div><div style="flex:1;min-width:0"><div style="font-weight:800;color:#fff;font-size:15px;display:flex;justify-content:space-between;gap:8px"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(f.name||'Student')+'</span><span style="font-size:11px;color:#A9B8D0;font-weight:400">'+timeStr+'</span></div><div style="font-size:13px;color:#A9B8D0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg ? (isMeLast?'You: ':'')+lastMsg.text : (f.school||'')+' • '+(f.grade||''))+'</div></div>';
         (function(friend){ row.addEventListener('click', function(e){ var _av=e.target.closest && e.target.closest('.zed-chat-avatar'); if(_av){ e.stopPropagation(); if(window.zedOpenProfilePic) window.zedOpenProfilePic(friend); else if(window.zedOpenUserProfile) window.zedOpenUserProfile(friend,{friendStatus:{status:'accepted',dir:'both'}}); return; } showView(friend); }); })(f);
         renderEl.appendChild(row);
       });
@@ -6351,7 +6392,7 @@ window.zedVerifyAdminCode = async function(code){
             var p=pRows && pRows[0] ? pRows[0] : {name:'Student'};
             var card=document.createElement('div');
             card.style.cssText='display:flex;justify-content:space-between;align-items:center;background:#0F2547;border:1px solid #E8C15A;border-radius:12px;padding:12px;margin:0 12px 8px';
-            card.innerHTML='<div class="zed-req-person" data-zed-profile-id="'+(p.id||'')+'" data-zed-dir="in" title="Tap to view profile" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer"><div class="zed-friends-avatar" data-profile-id="'+(p.id||'')+'" title="Tap to view profile pic" style="width:44px;height:44px;min-width:44px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#04101F;font-size:16px;border:2px solid #E8C15A;cursor:pointer">'+((p.avatar||p.avatar_url)?'<img src="'+(p.avatar||p.avatar_url)+'" style="width:100%;height:100%;object-fit:cover" />':(p.name||'S')[0])+'</div><div style="min-width:0"><div style="font-weight:700;color:#fff;font-size:13px;line-height:1.2;white-space:normal;word-break:keep-all;overflow-wrap:normal">'+(p.name||'Student')+'</div><div style="font-size:11px;color:#A9B8D0;line-height:1.2;white-space:normal;word-break:keep-all;overflow-wrap:normal">'+(p.school||'')+' \u2022 '+(p.grade||'')+'</div><div style="font-size:11px;color:#A9B8D0;white-space:nowrap">Tap to view profile</div></div></div><div style="display:flex;gap:6px"><button data-act="accept" style="background:#E8C15A;color:#04101F;border:none;border-radius:999px;padding:7px 12px;font-weight:900;font-size:12px;cursor:pointer">ACCEPT</button><button data-act="decline" style="background:#14315A;color:#fff;border:none;border-radius:999px;padding:7px 12px;font-weight:900;font-size:12px;cursor:pointer">DECLINE</button></div>';
+            card.innerHTML='<div class="zed-req-person" data-zed-profile-id="'+(p.id||'')+'" data-zed-dir="in" title="Tap to view profile" style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer"><div class="zed-friends-avatar" data-profile-id="'+(p.id||'')+'" title="Tap to view profile pic" style="width:44px;height:44px;min-width:44px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:16px;border:2px solid #E8C15A;cursor:pointer">'+((p.avatar||p.avatar_url)?'<img src="'+(p.avatar||p.avatar_url)+'" style="width:100%;height:100%;object-fit:cover" />':(p.name||'S')[0])+'</div><div style="min-width:0"><div style="font-weight:700;color:#fff;font-size:13px;line-height:1.2;white-space:normal;word-break:keep-all;overflow-wrap:normal">'+(p.name||'Student')+'</div><div style="font-size:11px;color:#A9B8D0;line-height:1.2;white-space:normal;word-break:keep-all;overflow-wrap:normal">'+(p.school||'')+' \u2022 '+(p.grade||'')+'</div><div style="font-size:11px;color:#A9B8D0;white-space:nowrap">Tap to view profile</div></div></div><div style="display:flex;gap:6px"><button data-act="accept" style="background:#E8C15A;color:#04101F;border:none;border-radius:999px;padding:7px 12px;font-weight:900;font-size:12px;cursor:pointer">ACCEPT</button><button data-act="decline" style="background:#14315A;color:#fff;border:none;border-radius:999px;padding:7px 12px;font-weight:900;font-size:12px;cursor:pointer">DECLINE</button></div>';
             (function(sid, cardEl){
               cardEl.querySelector('[data-act="accept"]').addEventListener('click', async function(){
                 // Accept = add reverse row
@@ -6439,7 +6480,7 @@ window.zedVerifyAdminCode = async function(code){
         }
         var timeStr='';
         if(lastMsg){ var d=new Date(lastMsg.created_at); timeStr=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0'); }
-        row.innerHTML='<div class="zed-chat-avatar" data-profile-id="'+f.id+'" title="Tap to view profile pic" style="width:44px;height:44px;min-width:44px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;border:2px solid #E8C15A;cursor:pointer">'+((f.avatar||f.avatar_url)?'<img src="'+(f.avatar||f.avatar_url)+'" style="width:100%;height:100%;object-fit:cover" />':(f.name||'S')[0])+'</div><div style="flex:1;min-width:0"><div style="font-weight:800;color:#04101F;font-size:15px;display:flex;justify-content:space-between;gap:8px"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(f.name||'Student')+'</span><span style="font-size:11px;color:#A9B8D0;font-weight:400">'+timeStr+'</span></div><div style="font-size:13px;color:#A9B8D0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg ? (isMeLast ? 'You: ' : '') + lastMsg.text : (f.school||'')+' • '+(f.grade||''))+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'+tick+'</div>';
+        row.innerHTML='<div class="zed-chat-avatar" data-profile-id="'+f.id+'" title="Tap to view profile pic" style="width:44px;height:44px;min-width:44px;border-radius:999px;overflow:hidden;background:#0F2547;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;border:2px solid #E8C15A;cursor:pointer">'+((f.avatar||f.avatar_url)?'<img src="'+(f.avatar||f.avatar_url)+'" style="width:100%;height:100%;object-fit:cover" />':(f.name||'S')[0])+'</div><div style="flex:1;min-width:0"><div style="font-weight:800;color:#fff;font-size:15px;display:flex;justify-content:space-between;gap:8px"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(f.name||'Student')+'</span><span style="font-size:11px;color:#A9B8D0;font-weight:400">'+timeStr+'</span></div><div style="font-size:13px;color:#A9B8D0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(lastMsg ? (isMeLast ? 'You: ' : '') + lastMsg.text : (f.school||'')+' • '+(f.grade||''))+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'+tick+'</div>';
         (function(friend){ row.addEventListener('click', function(e){ var _av=e.target.closest && e.target.closest('.zed-chat-avatar'); if(_av){ e.stopPropagation(); if(window.zedOpenProfilePic) window.zedOpenProfilePic(friend); else if(window.zedOpenUserProfile) window.zedOpenUserProfile(friend, {friendStatus:{status:'accepted',dir:'both'}}); return; } showView(friend); }); })(f);
         renderEl.appendChild(row);
       }
@@ -7364,12 +7405,16 @@ input[placeholder="Search school..."]{ position: relative !important; z-index: 3
     var addBtn=overlay.querySelector('#zed-prof-add');
     if(addBtn){ addBtn.addEventListener('click', async function(){
       if(!me){ alert('Please log in first'); return; }
+      if(addBtn.disabled) return;
+      try{ if(getSentRequests().indexOf(u.id)!==-1){ addBtn.textContent='✓ Request Sent'; addBtn.disabled=true; return; } }catch(e){}
+      if(window._zedSendingReq && window._zedSendingReq[u.id]) return;
+      window._zedSendingReq=window._zedSendingReq||{}; window._zedSendingReq[u.id]=true;
       addBtn.textContent='Sending...'; addBtn.disabled=true;
       try{
         var resp=await fetch(SUPA_URL+'/rest/v1/friendships',{method:'POST',headers:headers(),body:JSON.stringify({user_id:me.id,friend_id:u.id})});
-        if(resp.status===201||resp.status===200||resp.status===204||resp.status===409){ addBtn.textContent='\u2713 Request Sent'; addBtn.style.background='#333'; addBtn.style.color='#A9B8D0'; }
-        else { addBtn.textContent='Tap to retry'; addBtn.disabled=false; }
-      }catch(e){ addBtn.textContent='Tap to retry'; addBtn.disabled=false; }
+        if(resp.status===201||resp.status===200||resp.status===204||resp.status===409){ try{ addSentRequest(u.id); }catch(_e){} addBtn.textContent='\u2713 Request Sent'; addBtn.style.background='#333'; addBtn.style.color='#A9B8D0'; }
+        else { try{ if(window._zedSendingReq) delete window._zedSendingReq[u.id]; }catch(_e){} addBtn.textContent='Tap to retry'; addBtn.disabled=false; }
+      }catch(e){ try{ if(window._zedSendingReq) delete window._zedSendingReq[u.id]; }catch(_e){} addBtn.textContent='Tap to retry'; addBtn.disabled=false; }
     }); }
     var accBtn=overlay.querySelector('#zed-prof-accept');
     if(accBtn){ accBtn.addEventListener('click', async function(){
@@ -7687,10 +7732,9 @@ input[placeholder="Search school..."]{ position: relative !important; z-index: 3
 #zed-chat-head > div:nth-child(2) > div:first-child{ font-size:15px !important; font-weight:800 !important; white-space:nowrap !important; overflow:hidden !important; text-overflow:ellipsis !important; }
 #zed-chat-head > div:nth-child(2) > div:last-child{ color:#B0B3B8 !important; font-size:10px !important; white-space:nowrap !important; overflow:hidden !important; text-overflow:ellipsis !important; }
 #zed-chat-back{ flex-shrink:0 !important; }
-#zed-chat-add-open{ background:#C9A227 !important; color:#fff !important; border-radius:999px !important; padding:7px 10px !important; font-size:11px !important; flex-shrink:0 !important; }
+#zed-chat-add-open{ background:#C9A227 !important; color:#04101F !important; border-radius:999px !important; padding:7px 10px !important; font-size:11px !important; flex-shrink:0 !important; }
 #zed-chat-tabs{ background:#0F2547 !important; border-bottom:1px solid #C9A227 !important; padding:8px 10px !important; gap:6px !important; flex-shrink:0 !important; }
 #zed-chat-tabs button{ border-radius:999px !important; font-size:12px !important; padding:8px 8px !important; } /* 14 Nov: background/color/border removed - they blocked the blue active-tab highlight */
-#zed-chat-tabs button
 #zed-chat-list, #zed-chat-friends-list, #zed-chat-requests-list{ background:#0F2547 !important; flex:1 !important; min-height:0 !important; overflow-y:auto !important; }
 #zed-chat-view{ background:#0F2547 !important; flex:1 !important; min-height:0 !important; display:flex; flex-direction:column; overflow:hidden !important; }
 #zed-chat-view-head{ background:#0F2547 !important; border-bottom:1px solid #C9A227 !important; padding:8px 10px !important; gap:8px !important; flex-wrap:nowrap !important; flex-shrink:0 !important; }
@@ -10075,9 +10119,9 @@ main div.grid.grid-cols-3.zed-top3-parent{ grid-template-columns:1fr !important;
     var modal=document.createElement('div');
     modal.id='zed-offline-lib-modal';
     modal.style.cssText='position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:16px;';
-    modal.innerHTML='<div style="background:#0F0E0D;border:2px solid #E8C15A;border-radius:18px;width:100%;max-width:440px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;">'
-      +'<div style="padding:14px 16px;border-bottom:1px solid #2A2825;display:flex;justify-content:space-between;align-items:center;"><div style="color:#04101F;font-weight:800;font-size:15px;">📚 My Offline Papers ('+all.length+')</div><button id="zed-lib-close" style="background:#fff;color:#000;border:none;width:36px;height:36px;border-radius:10px;font-weight:800;cursor:pointer;">✕</button></div>'
-      +'<div style="padding:12px 16px;border-bottom:1px solid #1F1D1B;"><input id="zed-lib-search" placeholder="Search offline papers..." style="width:100%;height:42px;background:#1A1917;border:1px solid #2A2825;border-radius:12px;padding:0 14px;color:#fff;font-size:13px;outline:none;"></div>'
+    modal.innerHTML='<div style="background:#0F2547;border:2px solid #C9A227;border-radius:18px;width:100%;max-width:440px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;">'
+      +'<div style="padding:14px 16px;border-bottom:1px solid #C9A227;display:flex;justify-content:space-between;align-items:center;"><div style="color:#FFFFFF;font-weight:900;font-size:16px;">📚 My Offline Papers ('+all.length+')</div><button id="zed-lib-close" style="background:#E8C15A;color:#04101F;border:none;width:36px;height:36px;border-radius:10px;font-weight:800;cursor:pointer;">✕</button></div>'
+      +'<div style="padding:12px 16px;border-bottom:1px solid #C9A227;"><input id="zed-lib-search" placeholder="Search offline papers..." style="width:100%;height:42px;background:#14315A;border:1px solid #C9A227;border-radius:12px;padding:0 14px;color:#fff;font-size:13px;outline:none;"></div>'
       +'<div id="zed-lib-list" style="padding:12px 16px;overflow-y:auto;flex:1;min-height:200px;"></div></div>';
     document.body.appendChild(modal);
     var closeBtn=modal.querySelector('#zed-lib-close');
@@ -10088,7 +10132,7 @@ main div.grid.grid-cols-3.zed-top3-parent{ grid-template-columns:1fr !important;
       listWrap.innerHTML = items.map(function(f){
         var title = f.title || 'Paper';
         var dateStr=''; try{ dateStr=new Date(f.savedAt).toLocaleDateString(); }catch(e){}
-        return '<div style="background:#1A1917;border:1px solid #2A2825;border-radius:12px;padding:12px;margin-bottom:10px;">'
+        return '<div style="background:#14315A;border:1px solid #C9A227;border-radius:12px;padding:12px;margin-bottom:10px;">'
           +'<div style="color:#fff;font-size:13px;font-weight:700;line-height:1.3;margin-bottom:4px;">'+title+'</div>'
           +'<div style="color:#A9B8D0;font-size:11px;margin-bottom:10px;">'+formatSize(f.size)+' • '+dateStr+' • <span style="background:#E8C15A;color:#04101F;font-size:9px;font-weight:800;padding:2px 8px;border-radius:999px;">PDF READY</span></div>'
           +'<div style="display:flex;gap:8px;"><button data-open="'+f.id+'" style="flex:1;background:#E8C15A;color:#04101F;border:none;height:42px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;">📖 View PDF</button>'
@@ -10970,8 +11014,6 @@ body.zed-v15-no-results #zed-v15-no-results{display:block !important}
     body.zed-v15-in-videos.zed-v15-filter-unlocked #zed-v15-unlocked-view{display:grid !important}
     @media(min-width:768px){#zed-v15-unlocked-view{grid-template-columns:1fr 1fr}}
     
-    /* V16.1: floating offline-videos button REMOVED completely per user request - no 🎬 button anywhere */
-    #zed-offline-videos-btn{display:none !important}
     #zed-v15-unlocked-view .zed-dl-card video{background:#000}
     
 /* Chat button = NORMAL button again - never floating / dragging */
@@ -12123,8 +12165,6 @@ window._zedV15Filter = 'search';
   window.addEventListener('load', function(){ setTimeout(function(){ lastProcess=0; processVideos(); }, 800); });
   setTimeout(function(){ lastProcess=0; processVideos(); }, 1200);
   // No offline-videos button/modal, no Downloads tab.
-  // Cleanup: if an old cached DOM still has the button/modal, remove it once.
-  (function(){ try{ var _b=document.getElementById('zed-offline-videos-btn'); if(_b) _b.remove(); var _m=document.getElementById('zed-offline-videos-modal'); if(_m) _m.remove(); }catch(e){} })();
   // V8: steady re-apply every 600ms while in Videos - React recreates cards/headers, so one pass is not enough.
   // This is what keeps Unlocked showing ONLY unlocked and Search showing ONLY searched, even after React re-renders.
   setInterval(function(){
@@ -12137,7 +12177,7 @@ window._zedV15Filter = 'search';
     try{ markOfflineClass(); }catch(e){}
     try{ lastProcess=0; processVideos(); }catch(e){} // FIX 18 Nov: was only called when in Videos, so video UI that re-appeared outside Videos was never hidden. processVideos() itself decides.
   }, 600);
-  setTimeout(function(){ try{ var _b2=document.getElementById('zed-offline-videos-btn'); if(_b2) _b2.remove(); markOfflineClass(); flushPendingSync(); }catch(e){} }, 1000);
+  setTimeout(function(){ try{ markOfflineClass(); flushPendingSync(); }catch(e){} }, 1000);
   // V10: No interval touching chat button.
   window.zedVideoCoins={ unlockCost: UNLOCK_COST, getCoins: getCoins, getUnlocked: getUnlocked, process: function(){ lastProcess=0; processVideos(); }, setFilter: setFilter };
   console.log('[ZED] Video Coins active in V18 — NO VIDEO DOWNLOADS. Videos stream online only. Toolbar on top, hide-not-remove, GOLD+WHITE tab detection, exact search, YouTube+MP4 unlocked, chat normal');
@@ -13448,7 +13488,6 @@ window._zedV15Filter = 'search';
   #zed-offline-videos-placeholder{ background:#2B3D5A; border:1px solid rgba(255,255,255,.28); border-radius:22px; padding:28px 18px; text-align:center; color:#fff; margin:12px 0; }
   #zed-offline-videos-placeholder h3{ margin:0 0 6px; font-size:16px; font-weight:800; }
   #zed-offline-videos-placeholder p{ margin:0; font-size:13px; color:#A9B8D0; line-height:1.5; }
-  #zed-offline-papers-fallback{ display:none !important; } /* REMOVED 21 Nov 2026 — offline fallback showing downloaded papers/docs removed per user request */
 </style>
 <script>
 /* ZED FINAL FIX 19 Nov 2026 — runs LAST */
@@ -13518,7 +13557,7 @@ window._zedV15Filter = 'search';
     var url=URL.createObjectURL(blob);
     var m=document.createElement('div'); m.id='zed-pdf-native';
     m.style.cssText='position:fixed;inset:0;z-index:9999999;background:#04101F;display:flex;flex-direction:column;';
-    m.innerHTML='<div style="height:52px;background:#1A1917;border-bottom:1px solid #2A2825;display:flex;align-items:center;justify-content:space-between;padding:0 12px;flex-shrink:0;"><div style="color:#F5F1E8;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;">'+String(title||'Paper').slice(0,60).replace(/</g,'&lt;')+'</div><button data-act="close" style="background:#F5F1E8;color:#000;border:none;width:32px;height:32px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;">✕</button></div><div style="flex:1;background:#fff;"><iframe src="'+url+'" style="width:100%;height:100%;border:none;background:#fff;" allow="fullscreen"></iframe></div><div style="height:34px;background:#1A1917;display:flex;align-items:center;justify-content:center;"><span style="color:#6B6763;font-size:10px;">Built-in viewer • Works offline • Scroll to read</span></div>';
+    m.innerHTML='<div style="height:52px;background:#0F2547;border-bottom:1px solid #C9A227;display:flex;align-items:center;justify-content:space-between;padding:0 12px;flex-shrink:0;"><div style="color:#F5F1E8;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;">'+String(title||'Paper').slice(0,60).replace(/</g,'&lt;')+'</div><button data-act="close" style="background:#F5F1E8;color:#000;border:none;width:32px;height:32px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;flex-shrink:0;">✕</button></div><div style="flex:1;background:#fff;"><iframe src="'+url+'" style="width:100%;height:100%;border:none;background:#fff;" allow="fullscreen"></iframe></div><div style="height:34px;background:#0F2547;display:flex;align-items:center;justify-content:center;"><span style="color:#6B6763;font-size:10px;">Built-in viewer • Works offline • Scroll to read</span></div>';
     document.body.appendChild(m);
     try{ document.body.style.overflow='hidden'; }catch(e){}
     m.querySelector('[data-act="close"]').onclick=function(){ try{ URL.revokeObjectURL(url); }catch(e){} try{ document.body.style.overflow=''; }catch(e){} m.remove(); };
@@ -13663,31 +13702,7 @@ window._zedV15Filter = 'search';
   setInterval(runFinalPapers, 500);
   if(document.body) new MutationObserver(function(){ if(window.__zedFinalTimer) clearTimeout(window.__zedFinalTimer); window.__zedFinalTimer=setTimeout(runFinalPapers, 150); }).observe(document.body, {childList:true, subtree:true});
   document.addEventListener('input', function(e){ if(e.target && e.target.tagName==='INPUT' && e.target.closest && e.target.closest('main')) setTimeout(runFinalPapers, 120); }, true);
-  /* ---------- OFFLINE FALLBACK REMOVED 21 Nov 2026 — per user request ----------
-     REMOVED: the auto offline fallback that injected #zed-offline-papers-fallback
-     into Papers/Docs when offline (header "Offline — showing your X downloaded
-     papers/docs" + a card per downloaded paper/doc from IndexedDB).
-     Papers/Docs now just show React's normal empty state when offline
-     ("No papers found" / "No documents yet.").
-     Downloaded papers are still openable via the intentional "My Offline Papers"
-     FAB library (tap the 📚 button) — that is NOT a fallback, it only opens
-     when you tap it. This removal only kills the AUTO-injected list.
-     Also removed: the paper-meta cache interval (only existed for fallback titles)
-     and the 1500ms timer + click/online/offline listeners that re-rendered it.
-  */
-  function zedRemoveAllOfflineFallbacks(){
-    try{
-      document.querySelectorAll('#zed-offline-papers-fallback').forEach(function(n){ try{ n.remove(); }catch(e){} });
-      document.querySelectorAll('[data-zed-empty-hidden="1"]').forEach(function(n){ try{ n.style.display=''; n.removeAttribute('data-zed-empty-hidden'); }catch(e){} });
-    }catch(e){}
-  }
-  function renderOfflinePapersFallback(){
-    // REMOVED — was the auto offline fallback. Now just cleans up any leftover copy.
-    try{ zedRemoveAllOfflineFallbacks(); }catch(e){}
-  }
-  // No setInterval(renderOfflinePapersFallback) — fallback is gone.
-  // Keep one online cleanup so a fallback from an older cached version can never stick.
-  window.addEventListener('online', function(){ zedRemoveAllOfflineFallbacks(); });
+  /* Offline fallback is gone — no code for it. Papers/Docs show their normal empty state offline. */
 
   /* ---------- VIDEOS: ONLY when ONLINE. When offline, NO videos at all. ---------- */
   function isVideosTabActive(){
@@ -13820,9 +13835,6 @@ window._zedV15Filter = 'search';
   document.addEventListener('input', function(e){ if(e.target && e.target.tagName==='INPUT') setTimeout(repairBlankCards, 100); }, true);
   if(document.body) new MutationObserver(function(){ if(window.__zedV21T) clearTimeout(window.__zedV21T); window.__zedV21T=setTimeout(repairBlankCards, 120); }).observe(document.body, {childList:true, subtree:true});
 
-  // v21OfflineFallback — REMOVED 21 Nov 2026: offline fallback (auto downloaded Papers/Docs list) removed per user request. Now a no-op that only cleans leftovers.
-  // No interval here — offline fallback is removed, no timer re-renders it.
-  async function v21OfflineFallback(){ /* REMOVED 21 Nov — offline fallback gone, no-op. Just cleans any leftover node. */ try{ document.querySelectorAll('#zed-offline-papers-fallback').forEach(function(n){ try{ n.remove(); }catch(e){} }); }catch(e){} }
 })();
 </script>
 
@@ -15422,6 +15434,7 @@ window._zedV15Filter = 'search';
       var els = document.querySelectorAll('main div, main span, main p, main h1, main h2, main h3, main h4, main td, main th, main label, header div, header span');
       for(var i=0;i<els.length;i++){
         var el = els[i];
+        try{ if(el.closest && (el.closest('#zed-chat-panel') || el.closest('#zed-offline-lib-modal') || el.closest('#zed-pdf-modal') || el.closest('#zed-pdf-native'))) continue; }catch(e){} // FINAL LOCK owns these
         try{
           var cs = getComputedStyle(el);
           var bgL = lum(cs.backgroundColor);
@@ -15640,6 +15653,7 @@ window._zedV15Filter = 'search';
   function fixOne(el){
     try{
       if(!el || el.nodeType!==1) return;
+      if(el.closest && (el.closest('#zed-chat-panel') || el.closest('#zed-offline-lib-modal') || el.closest('#zed-pdf-modal') || el.closest('#zed-pdf-native'))) return; // FINAL LOCK owns chat/offline/PDF colours — fixer must not flip them
       var tag = (el.tagName||'').toLowerCase();
       if(tag==='input' || tag==='select' || tag==='textarea' || tag==='img' || tag==='svg' || tag==='video' || tag==='canvas') return;
       if(el.closest && el.closest('#zed-fab-stack')) return; // FAB icons are emoji, leave them
@@ -16078,6 +16092,28 @@ window._zedV15Filter = 'search';
   setTimeout(function(){ if(rootHasContent()) hideRescue(); }, 12000);
 })();
 </script>
+
+<!-- ZED FINAL LOCK — chat + offline colours. This is the ONLY place that locks these. Do not add another fixer for chat/offline. -->
+<style id="zed-chat-offline-final-lock">
+  /* Chat names: always white on dark blue. CSS !important beats any stale inline dark colour, so names can never flip back to invisible. */
+  #zed-chat-panel .zed-friends-person > div:last-child > div:first-child,
+  #zed-chat-panel .zed-search-person > div:last-child > div:first-child,
+  #zed-chat-panel .zed-req-person > div:last-child > div:first-child,
+  #zed-chat-panel .zed-chat-friend > div:nth-child(2) > div:first-child,
+  #zed-chat-panel .zed-chat-friend > div:nth-child(2) > div:first-child > span:first-child{ color:#FFFFFF !important; }
+  #zed-chat-panel .zed-friends-avatar{ color:#FFFFFF !important; }
+  /* Tabs: never a gradient, JS in switchChatTab owns bg + text (gold = dark text, navy = white text). */
+  #zed-chat-tabs button{ background-image:none !important; }
+  /* Offline modal: app theme — navy panel, gold border, white title, navy cards. */
+  #zed-offline-lib-modal > div{ background:#0F2547 !important; border-color:#C9A227 !important; }
+  #zed-offline-lib-modal > div > div:first-child{ border-bottom-color:#C9A227 !important; }
+  #zed-offline-lib-modal > div > div:first-child > div:first-child{ color:#FFFFFF !important; font-weight:900 !important; }
+  #zed-offline-lib-modal input{ background:#14315A !important; border-color:#C9A227 !important; color:#FFFFFF !important; }
+  #zed-offline-lib-modal #zed-lib-list > div{ background:#14315A !important; border-color:#C9A227 !important; }
+  #zed-offline-lib-modal #zed-lib-list > div > div:first-child{ color:#FFFFFF !important; }
+  /* PDF viewer headers: navy, not brown/black. */
+  #zed-pdf-modal > div:first-child, #zed-pdf-native > div:first-child{ background:#0F2547 !important; border-bottom-color:#C9A227 !important; }
+</style>
 </body>
 
 </html>
