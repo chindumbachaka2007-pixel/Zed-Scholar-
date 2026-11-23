@@ -3067,15 +3067,18 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
       + '<div style="background:#0F2547;border:1px solid #1E3A5F;border-radius:10px;padding:0 8px;height:34px;display:flex;align-items:center;gap:6px;"><input data-act="page-input" type="number" min="1" value="1" style="width:44px;background:transparent;border:none;color:#F5F1E8;text-align:center;font-size:12px;font-weight:700;outline:none;"><span style="color:#6B6763;font-size:11px;">/</span><span data-act="page-total" style="color:#F5F1E8;font-size:12px;font-weight:700;min-width:20px;text-align:center;">–</span></div>'
       + '<button data-act="next" style="background:#1E3A5F;border:1px solid #223A5E;color:#F5F1E8;width:36px;height:34px;border-radius:10px;cursor:pointer;font-size:16px;font-weight:700;">›</button></div>'
       + '<div style="display:flex;align-items:center;gap:6px;"><button data-act="zoom-out" style="background:#1E3A5F;border:1px solid #223A5E;color:#F5F1E8;width:36px;height:34px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;">−</button>'
-      + '<span data-act="zoom-label" style="color:#F5F1E8;font-size:11px;font-weight:700;min-width:46px;text-align:center;background:#0F2547;border:1px solid #1E3A5F;border-radius:8px;height:34px;display:flex;align-items:center;justify-content:center;padding:0 6px;">100%</span>'
+      + '<span data-act="zoom-label" title="Tap to reset to 100%" style="color:#F5F1E8;font-size:11px;font-weight:700;min-width:46px;text-align:center;background:#0F2547;border:1px solid #1E3A5F;border-radius:8px;height:34px;display:flex;align-items:center;justify-content:center;padding:0 6px;cursor:pointer;">100%</span>'
       + '<button data-act="zoom-in" style="background:#1E3A5F;border:1px solid #223A5E;color:#F5F1E8;width:36px;height:34px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;">+</button>'
-      + '<button data-act="fit" style="background:#0F2547;border:1px solid #E8C15A;color:#A9B8D0;height:34px;padding:0 12px;border-radius:10px;font-size:10px;font-weight:800;cursor:pointer;letter-spacing:0.05em;">FIT</button>'
+      + '<button data-act="fit" title="Fit width" style="background:#0F2547;border:1px solid #E8C15A;color:#A9B8D0;height:34px;padding:0 10px;border-radius:10px;font-size:10px;font-weight:800;cursor:pointer;letter-spacing:0.05em;">FIT W</button>'
+      + '<button data-act="zoom-100" title="Exact 100%" style="background:#0F2547;border:1px solid #E8C15A;color:#fff;height:34px;padding:0 10px;border-radius:10px;font-size:10px;font-weight:800;cursor:pointer;">100%</button>'
       + '<button data-act="rotate" style="background:#1E3A5F;border:1px solid #223A5E;color:#9A9590;height:34px;padding:0 10px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;">↻ ROTATE</button></div></div>'
+      + '<div style="height:40px;background:#0F2547;border-bottom:1px solid #C9A227;display:flex;align-items:center;gap:8px;padding:0 10px;flex-shrink:0;">'
+      + '<span style="color:#6B6763;font-size:10px;font-weight:800;flex-shrink:0;">25%</span><input data-act="zoom-slider" type="range" min="25" max="300" step="1" value="100" style="flex:1;accent-color:#E8C15A;height:24px;cursor:pointer;"><span style="color:#6B6763;font-size:10px;font-weight:800;flex-shrink:0;">300%</span>'
+      + '<button data-act="fit-page" title="Fit whole page" style="background:#0F2547;border:1px solid #E8C15A;color:#A9B8D0;height:28px;padding:0 10px;border-radius:999px;font-size:10px;font-weight:800;cursor:pointer;flex-shrink:0;white-space:nowrap;">FIT PAGE</button></div>'
       + '<div data-act="container" style="flex:1;overflow:auto;background:#04101F;display:block;padding:12px 12px 32px;-webkit-overflow-scrolling:touch;position:relative;overscroll-behavior:contain;scroll-behavior:auto;">'
       + '<div data-act="pages" style="display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;margin:0 auto;"></div>'
       + '<div data-act="loader" style="position:absolute;top:34%;left:50%;transform:translate(-50%,-50%);background:#0F2547;border:1px solid #C9A227;padding:22px 26px;border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:12px;z-index:10;"><div style="width:34px;height:34px;border:3px solid #1E3A5F;border-top-color:#A9B8D0;border-radius:50%;animation:zedPdfSpin 0.7s linear infinite;"></div><div style="color:#FFFFFF;font-size:13px;font-weight:600;">Loading PDF</div></div>'
-      + '<style>@keyframes zedPdfSpin{to{transform:rotate(360deg)}}</style></div>'
-      + '<div style="height:34px;background:#0F2547;border-top:1px solid #C9A227;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="color:#6B6763;font-size:10px;">Scroll to read • Pinch to zoom • Swipe up / down</span></div>';
+      + '<style>@keyframes zedPdfSpin{to{transform:rotate(360deg)}}</style></div>';
     document.body.appendChild(modal);
     try{ document.body.style.overflow='hidden'; }catch(e){}
 
@@ -3091,7 +3094,7 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
       modal: modal, container: container, pagesEl: pagesEl,
       pdf: null, total: 0, scale: 1, rotation: 0, currentPage: 1,
       dims: [], // {w,h} at scale 1, rotation 0, per page (index 0 = page 1)
-      wrappers: [], canvases: [], renderedKey: [], rendering: {},
+      wrappers: [], canvases: [], renderedKey: [], rendering: {}, offscreen: [], // V9: per-page offscreen canvas for blink-free render
       observer: null, closed: false, renderGen: 0,
       scrollRaf: 0, isRestoring: false,
       pinch: null, wheelTimer: null,
@@ -3101,11 +3104,41 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
 
     function pageW(n){ var d=v.dims[n-1]; if(!d) return 600; return (v.rotation===90||v.rotation===270) ? d.h : d.w; }
     function pageH(n){ var d=v.dims[n-1]; if(!d) return 800; return (v.rotation===90||v.rotation===270) ? d.w : d.h; }
+    // ---- V5: ONE PAGE AT A TIME + ACCURATE ZOOM ----
+    // Per-page mode: only the current page's wrapper is visible. All other canvases
+    // stay in the DOM (no rebuild) but display:none, so zoom/scroll can never drift
+    // across pages and Prev/Next is the only way the page changes.
+    function showOnlyPage(n){
+      // V6 SCROLL MODE: every page is visible in one continuous list.
+      // This helper now shows ALL pages — kept so layout/goTo call sites stay unchanged.
+      for (var i=0;i<v.wrappers.length;i++){
+        try{ v.wrappers[i].style.display='flex'; }catch(e){}
+      }
+    }
+    function fitWidthScale(){
+      // V6 SCROLL MODE: fit the WIDEST page in the whole doc, so EVERY page fits.
+      // Per-page mode fit only the current page — in scroll mode that left wider pages cut off.
+      var avail=availWidth(); var widest=0;
+      for (var i=1;i<=v.total;i++){ var w0=pageW(i); if (w0>widest) widest=w0; }
+      if (avail<=0 || widest<=0) return v.scale;
+      return clamp((avail/widest)*0.98, 0.15, 3.0);
+    }
+    function fitPageScale(){
+      var availW=availWidth(); var availH=0;
+      try{ availH=Math.max(0, container.clientHeight-24); }catch(e){ availH=600; }
+      var w0=pageW(v.currentPage), h0=pageH(v.currentPage);
+      if (availW<=0 || availH<=0 || w0<=0 || h0<=0) return v.scale;
+      return clamp(Math.min((availW/w0)*0.98, (availH/h0)*0.96), 0.15, 3.0);
+    }
+    function syncZoomSlider(){
+      try{ var s=modal.querySelector('[data-act="zoom-slider"]'); if(s) s.value=String(Math.round(v.scale*100)); }catch(e){}
+    }
     function scaleKey(){ return v.scale.toFixed(3)+'|'+v.rotation; }
     function updateUI(){
       if (pageInput) pageInput.value = String(v.currentPage);
       if (pageTotalEl) pageTotalEl.textContent = String(v.total||'–');
       if (zoomLabel) zoomLabel.textContent = Math.round(v.scale*100)+'%';
+      syncZoomSlider();
       var prevBtn = modal.querySelector('[data-act="prev"]');
       var nextBtn = modal.querySelector('[data-act="next"]');
       if (prevBtn) prevBtn.style.opacity = v.currentPage<=1 ? '0.4':'1';
@@ -3126,6 +3159,7 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
       // If the widest page fits, there is NO horizontal scroll at all — kills sideways drift.
       // Only when zoomed wider do we allow horizontal scrolling.
       try{
+        // V6 SCROLL MODE: widest page in the doc decides the horizontal lock.
         var widest=0;
         for (var i=1;i<=v.total;i++){ var w=pageW(i)*v.scale; if (w>widest) widest=w; }
         var avail=availWidth();
@@ -3143,41 +3177,49 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
     }
     function layoutPages(){
       // Resize wrappers + canvas CSS boxes ONLY. Never touches canvas bitmaps, never clears DOM.
+      // V6 SCROLL MODE: size every wrapper, show every page.
       for (var i=1;i<=v.total;i++){
         var wrap=v.wrappers[i-1]; var cv=v.canvases[i-1]; if(!wrap||!cv) continue;
-        var w=Math.round(pageW(i)*v.scale), h=Math.round(pageH(i)*v.scale);
-        wrap.style.height=h+'px';
+        var w=pageW(i)*v.scale, h=pageH(i)*v.scale; // V7: NO Math.round
+        wrap.style.height=(h+22)+'px'; // V8: canvas h + label (~14) + gap (6) + 2 — old h clipped label and shifted canvas
         cv.style.width=w+'px'; cv.style.height=h+'px';
       }
+      showOnlyPage(v.currentPage);
       updateHorizontalLock();
     }
     function captureAnchor(clientX, clientY){
-      // Page-relative anchor: WHICH page + WHERE inside it. Survives any zoom/rotate.
-      var cRect=container.getBoundingClientRect();
-      var best=null, bestDist=Infinity;
+      // V8: anchor is measured on the CANVAS (the actual page), NOT the wrapper.
+      // Wrapper is full-width with the canvas CENTRED inside it, plus a label below.
+      // Measuring on the wrapper made fx off by the centring gap and fy off by the
+      // label — so zoom drifted sideways / away from your fingers. Canvas = true page.
       for (var i=1;i<=v.total;i++){
-        var wrap=v.wrappers[i-1]; if(!wrap) continue;
-        var r=wrap.getBoundingClientRect();
+        var cv=v.canvases[i-1]; if(!cv) continue;
+        var r=cv.getBoundingClientRect();
         if (clientY>=r.top-2 && clientY<=r.bottom+2){
           var fx = r.width>0 ? clamp((clientX-r.left)/r.width,0,1) : 0.5;
           var fy = r.height>0 ? clamp((clientY-r.top)/r.height,0,1) : 0;
           return { page:i, fx:fx, fy:fy, x:clientX, y:clientY };
         }
-        var d=Math.abs((r.top+r.height/2)-clientY);
-        if (d<bestDist){ bestDist=d; best=i; }
+      }
+      var best=0, bestDist=Infinity;
+      for (var j=1;j<=v.total;j++){
+        var cv2=v.canvases[j-1]; if(!cv2) continue;
+        var r2=cv2.getBoundingClientRect();
+        var d=Math.abs((r2.top+r2.height/2)-clientY);
+        if (d<bestDist){ bestDist=d; best=j; }
       }
       if (best){
-        var wr=v.wrappers[best-1]; var rr=wr.getBoundingClientRect();
-        return { page:best, fx:clamp((clientX-rr.left)/Math.max(1,rr.width),0,1), fy:clamp((clientY-rr.top)/Math.max(1,rr.height),0,1), x:clientX, y:clientY };
+        var rb=v.canvases[best-1].getBoundingClientRect();
+        return { page:best, fx:clamp((clientX-rb.left)/Math.max(1,rb.width),0,1), fy:clamp((clientY-rb.top)/Math.max(1,rb.height),0,1), x:clientX, y:clientY };
       }
       return { page:v.currentPage, fx:0.5, fy:0.5, x:clientX, y:clientY };
     }
     function restoreAnchor(a){
       if(!a) return;
       try{
-        var wrap=v.wrappers[a.page-1]; if(!wrap) return;
+        var cv=v.canvases[a.page-1]; if(!cv) return; // V8: canvas, not wrapper
         var cRect=container.getBoundingClientRect();
-        var wRect=wrap.getBoundingClientRect();
+        var wRect=cv.getBoundingClientRect();
         var targetTop = container.scrollTop + (wRect.top - cRect.top) + (a.fy||0)*wRect.height - (a.y - cRect.top);
         var targetLeft = container.scrollLeft + (wRect.left - cRect.left) + (a.fx||0)*wRect.width - (a.x - cRect.left);
         v.isRestoring=true;
@@ -3189,29 +3231,41 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
       }catch(e){ v.isRestoring=false; }
     }
     function setScale(newScale, anchor){
+      // V7: full float precision — 0.0005 = 0.05% dead-zone only.
       newScale = clamp(newScale, 0.15, 3.5);
-      if (Math.abs(newScale - v.scale) < 0.001) return;
+      if (Math.abs(newScale - v.scale) < 0.0005) return;
       var a = anchor || (function(){ var r=container.getBoundingClientRect(); return captureAnchor(r.left+r.width/2, r.top+r.height/2); })();
       v.scale = newScale;
       v.renderGen++;
-      v.renderedKey = v.renderedKey.map(function(){ return ''; }); // old bitmaps are stale at new scale
+      v.renderedKey = v.renderedKey.map(function(){ return ''; });
       layoutPages();
       updateUI();
-      // Layout is synchronous — one rAF is enough for the settled rects. No double-restore fighting the user.
-      requestAnimationFrame(function(){ if (v.closed) return; restoreAnchor(a); renderVisible(); });
+      // V7: restore SYNCHRONOUSLY, same frame, before paint. Old rAF left one frame with new layout + old scroll = jump.
+      restoreAnchor(a);
+      renderVisible();
     }
     function goToPage(n){
       n = clamp(Math.round(n)||1, 1, v.total);
       v.currentPage=n; updateUI();
-      var wrap=v.wrappers[n-1]; if(!wrap) return;
-      // Explicit user action = the ONLY time we set scrollTop besides zoom/rotate/pinch.
-      var cRect=container.getBoundingClientRect(); var wRect=wrap.getBoundingClientRect();
+      var cv=v.canvases[n-1]; if(!cv) return; // V8: canvas top, not wrapper top
+      // V6 SCROLL MODE: scroll the list so this page's top sits at the top of the viewer.
+      var cRect=container.getBoundingClientRect(); var wRect=cv.getBoundingClientRect();
       v.isRestoring=true;
       container.scrollTop = Math.max(0, container.scrollTop + (wRect.top - cRect.top) - 8);
       if (pageW(n)*v.scale <= availWidth() + 1) container.scrollLeft=0;
       setTimeout(function(){ v.isRestoring=false; }, 60);
+      renderPage(n);
+      if (n>1) renderPage(n-1);
+      if (n<v.total) renderPage(n+1);
     }
     async function renderPage(n){
+      // V9 BLINK-FREE: double-buffered render. The old code did cv.width=... FIRST,
+      // which CLEARS the visible canvas instantly (browser spec), then awaited the
+      // PDF render for 100-300ms — during that wait the page was WHITE = blink/flicker
+      // on every finger lift. Now we render OFFSCREEN, and the visible canvas keeps
+      // its old (stretched, but visible) bitmap until the new sharp one is ready.
+      // Swap is resize + drawImage in ONE synchronous block, before the next paint,
+      // so a blank frame is never painted.
       if (v.closed || !v.pdf) return;
       var key=scaleKey();
       if (v.renderedKey[n-1]===key) return;
@@ -3223,31 +3277,45 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
         if (v.closed || myGen!==v.renderGen) return;
         var viewport=page.getViewport({ scale: v.scale, rotation: v.rotation });
         var cv=v.canvases[n-1]; if(!cv) return;
+        // V5 accurate zoom: render at EXACT scale × device pixels (cap 2x for memory).
         var dpr=Math.min(window.devicePixelRatio||1, 2);
         if (viewport.width*dpr>3500) dpr=3500/viewport.width;
         if (viewport.height*dpr>3500) dpr=3500/viewport.height;
         dpr=Math.max(0.5, dpr);
-        cv.width=Math.max(1, Math.floor(viewport.width*dpr));
-        cv.height=Math.max(1, Math.floor(viewport.height*dpr));
+        var bw=Math.max(1, Math.round(viewport.width*dpr)); // V7: round not floor
+        var bh=Math.max(1, Math.round(viewport.height*dpr));
+        // Render OFFSCREEN — visible canvas untouched, no blink.
+        var off=v.offscreen[n-1]; if(!off){ off=document.createElement('canvas'); v.offscreen[n-1]=off; }
+        off.width=bw; off.height=bh;
+        var octx=off.getContext('2d');
+        octx.setTransform(dpr,0,0,dpr,0,0);
+        octx.fillStyle='#fff'; octx.fillRect(0,0,viewport.width,viewport.height);
+        await page.render({ canvasContext: octx, viewport: viewport }).promise;
+        if (v.closed || myGen!==v.renderGen) return;
+        // Swap in ONE synchronous block — resize + draw before next paint.
+        cv.width=bw; cv.height=bh;
         cv.style.width=viewport.width+'px'; cv.style.height=viewport.height+'px';
         var ctx=cv.getContext('2d');
-        ctx.setTransform(dpr,0,0,dpr,0,0);
-        ctx.fillStyle='#fff'; ctx.fillRect(0,0,viewport.width,viewport.height);
-        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
-        if (v.closed || myGen!==v.renderGen) return;
+        ctx.setTransform(1,0,0,1,0,0);
+        ctx.drawImage(off, 0, 0);
         v.renderedKey[n-1]=key;
         if (typeof page.cleanup==='function'){ try{ page.cleanup(); }catch(e){} }
       }catch(e){
         // A cancelled / stale render is silent — never show a "Failed to render" wall.
-      }finally{ v.rendering[n]=false; }
+      }finally{
+        v.rendering[n]=false;
+        // V9: if a newer zoom arrived mid-render, we skipped it — retry once so the
+        // page never stays stuck on a stretched old bitmap. No blink: retry also renders offscreen.
+        if (!v.closed && v.renderedKey[n-1]!==scaleKey()){ try{ setTimeout(function(){ if(!v.closed) renderPage(n); }, 0); }catch(e2){} }
+      }
     }
     function renderVisible(){
+      // V6 SCROLL MODE: render what is visible + 1 page of margin each way.
       if (v.closed) return;
       var cRect=container.getBoundingClientRect();
       for (var i=1;i<=v.total;i++){
-        var wrap=v.wrappers[i-1]; if(!wrap) continue;
-        var r=wrap.getBoundingClientRect();
-        // Visible + 1 page of margin each way. Everything else stays as a placeholder — no render.
+        var cv=v.canvases[i-1]; if(!cv) continue; // V8: canvas
+        var r=cv.getBoundingClientRect();
         if (r.bottom >= cRect.top-600 && r.top <= cRect.bottom+600){ renderPage(i); }
       }
     }
@@ -3258,8 +3326,8 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
         var cRect=container.getBoundingClientRect();
         var best=0, bestVis=-1;
         for (var i=1;i<=v.total;i++){
-          var wrap=v.wrappers[i-1]; if(!wrap) continue;
-          var r=wrap.getBoundingClientRect();
+          var cv=v.canvases[i-1]; if(!cv) continue; // V8: canvas
+          var r=cv.getBoundingClientRect();
           var vis=Math.max(0, Math.min(r.bottom, cRect.bottom)-Math.max(r.top, cRect.top));
           if (vis>bestVis){ bestVis=vis; best=i; }
         }
@@ -3291,41 +3359,74 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
     });
     modal.querySelector('[data-act="zoom-out"]').onclick=function(){
       var r=container.getBoundingClientRect();
-      setScale(v.scale-0.25, captureAnchor(r.left+r.width/2, r.top+r.height/2));
+      setScale(v.scale-0.05, captureAnchor(r.left+r.width/2, r.top+r.height/2));
     };
     modal.querySelector('[data-act="zoom-in"]').onclick=function(){
       var r=container.getBoundingClientRect();
-      setScale(v.scale+0.25, captureAnchor(r.left+r.width/2, r.top+r.height/2));
+      setScale(v.scale+0.05, captureAnchor(r.left+r.width/2, r.top+r.height/2));
     };
     modal.querySelector('[data-act="fit"]').onclick=function(){
-      // FIT = fit the WIDEST page in the whole document, so EVERY page fits — not just the current one.
-      // Old code fit only the current page, so a wider page later stayed cut off.
-      // For your wide Science paper this lands around 40%. Minimum is now 15%, not 50%.
+      // V6 FIT W = exact fit-width of the WIDEST page, so every page fits in scroll mode.
+      // Scale = availWidth / widestPageWidth, measured live — no guessed 40%.
       var a={ page:v.currentPage, fx:0, fy:0, x:container.getBoundingClientRect().left, y:container.getBoundingClientRect().top };
-      var avail=availWidth();
-      var widest0=0;
-      for (var i=1;i<=v.total;i++){ var w0=pageW(i); if (w0>widest0) widest0=w0; }
-      if (widest0>0) setScale(clamp((avail/widest0)*0.98, 0.15, 2.5), a);
+      setScale(fitWidthScale(), a);
     };
+    // Exact 100%: scale = 1.000, anchored at the centre of the current page.
+    modal.querySelector('[data-act="zoom-100"]').onclick=function(){
+      var r=container.getBoundingClientRect();
+      setScale(1.0, captureAnchor(r.left+r.width/2, r.top+r.height/2));
+    };
+    // Tap the % label = reset to 100% too (fastest reset on phone).
+    if (zoomLabel) zoomLabel.onclick=function(){
+      var r2=container.getBoundingClientRect();
+      setScale(1.0, captureAnchor(r2.left+r2.width/2, r2.top+r2.height/2));
+    };
+    // FIT PAGE = exact fit of the whole current page (width AND height) — nothing cut off.
+    modal.querySelector('[data-act="fit-page"]').onclick=function(){
+      var a2={ page:v.currentPage, fx:0.5, fy:0, x:container.getBoundingClientRect().left+container.getBoundingClientRect().width/2, y:container.getBoundingClientRect().top };
+      setScale(fitPageScale(), a2);
+    };
+    // Slider = continuous accurate zoom (1% steps). Live layout while dragging,
+    // crisp re-render 100ms after you stop — so it never lags or blurs mid-drag.
+    (function(){
+      var slider=modal.querySelector('[data-act="zoom-slider"]'); if(!slider) return;
+      var sliderTimer=null;
+      slider.addEventListener('input', function(){
+        var target=clamp(parseInt(slider.value,10)/100, 0.25, 3.0);
+        var r=container.getBoundingClientRect();
+        var a=captureAnchor(r.left+r.width/2, r.top+r.height/2);
+        v.scale=target; v.renderGen++; v.renderedKey=v.renderedKey.map(function(){ return ''; });
+        layoutPages(); updateUI();
+        clearTimeout(sliderTimer);
+        sliderTimer=setTimeout(function(){ if(!v.closed){ requestAnimationFrame(function(){ restoreAnchor(a); renderVisible(); }); } }, 100);
+      });
+      slider.addEventListener('change', function(){
+        var target=clamp(parseInt(slider.value,10)/100, 0.25, 3.0);
+        var r=container.getBoundingClientRect();
+        setScale(target, captureAnchor(r.left+r.width/2, r.top+r.height/2));
+      });
+    })();
     rotateBtn.onclick=function(){
       var r=container.getBoundingClientRect();
       var a=captureAnchor(r.left+r.width/2, r.top+r.height/2);
       v.rotation=(v.rotation+90)%360;
       v.renderGen++; v.renderedKey=v.renderedKey.map(function(){ return ''; });
       layoutPages(); updateUI();
-      requestAnimationFrame(function(){ if (v.closed) return; restoreAnchor(a); renderVisible(); });
+      restoreAnchor(a); renderVisible(); // V7 synchronous
     };
     document.addEventListener('keydown', function onKey(e){
       if (v.closed){ document.removeEventListener('keydown', onKey); return; }
       if (e.key==='Escape') closeViewer();
       else if (e.key==='ArrowLeft' && v.currentPage>1) goToPage(v.currentPage-1);
       else if (e.key==='ArrowRight' && v.currentPage<v.total) goToPage(v.currentPage+1);
-      else if (e.key==='+'||e.key==='='){ var r=container.getBoundingClientRect(); setScale(v.scale+0.2, captureAnchor(r.left+r.width/2, r.top+r.height/2)); }
-      else if (e.key==='-'||e.key==='_'){ var r2=container.getBoundingClientRect(); setScale(v.scale-0.2, captureAnchor(r2.left+r2.width/2, r2.top+r2.height/2)); }
+      else if (e.key==='+'||e.key==='='){ var r=container.getBoundingClientRect(); setScale(v.scale+0.05, captureAnchor(r.left+r.width/2, r.top+r.height/2)); }
+      else if (e.key==='-'||e.key==='_'){ var r2=container.getBoundingClientRect(); setScale(v.scale-0.05, captureAnchor(r2.left+r2.width/2, r2.top+r2.height/2)); }
     });
 
     // ---------- SCROLL: read-only ----------
     container.addEventListener('scroll', function(){
+      // V6 SCROLL MODE: scrolling moves through pages — update the page number
+      // from the most-visible page. READ-ONLY: never writes scrollTop.
       if (v.scrollRaf) return;
       v.scrollRaf=requestAnimationFrame(function(){
         v.scrollRaf=0; if (v.closed) return;
@@ -3338,62 +3439,94 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
       if (!(e.ctrlKey||e.metaKey)) return;
       e.preventDefault();
       var a=captureAnchor(e.clientX, e.clientY);
-      var next=clamp(v.scale * (e.deltaY<0 ? 1.12 : 0.89), 0.15, 3.5);
+      var next=clamp(v.scale * (e.deltaY<0 ? 1.05 : 0.952), 0.15, 3.5);
       // Update layout immediately, defer the heavy re-render until the wheel stops.
       var oldGen=v.renderGen; v.scale=next; v.renderGen++; v.renderedKey=v.renderedKey.map(function(){ return ''; });
       layoutPages(); updateUI();
-      requestAnimationFrame(function(){ if (v.closed) return; restoreAnchor(a); });
+      restoreAnchor(a); // V7 synchronous
       clearTimeout(v.wheelTimer);
       v.wheelTimer=setTimeout(function(){ if (!v.closed) renderVisible(); }, 120);
     }, { passive:false });
 
-    // ---------- PINCH: only the canvas under your fingers scales live ----------
-    var pinchStartDist=0, pinchStartScale=1, pinchLiveScale=1, pinchMidX=0, pinchMidY=0, pinchAnchor=null, pinchCanvas=null;
+    function updateZoomOnly(){
+      // V8 smooth: during pinch, only % label + slider change. Skips prev/next/rotate queries.
+      try{ if (zoomLabel) zoomLabel.textContent=(Math.round(v.scale*1000)/10).toFixed(1)+'%'; }catch(e){}
+      try{ syncZoomSlider(); }catch(e){}
+    }
+    // ---------- PINCH V7: LIVE LAYOUT + ANCHOR LOCK — NO JUMP ON RELEASE ----------
+    // Why old pinch jumped when you lifted fingers:
+    //  - It only scaled ONE canvas with CSS transform, using anchor from touchstart.
+    //    If fingers moved at all (they always do), that anchor was stale → jump on release.
+    //  - Release went through rAF → one frame with new layout + old scroll.
+    // V7: every move re-lays-out REAL doc at REAL scale + locks exact paper-point under
+    // fingers to fingers. On release nothing left to jump — only crisp bitmaps remain.
+    var pinchStartDist=0, pinchStartScale=1, pinchLiveScale=1, pinchMidX=0, pinchMidY=0;
+    var pinchRaf=0, pinchActive=false, pinchMoved=false;
+    function pinchApplyLive(){
+      pinchRaf=0; if(!pinchActive || pinchStartDist<=0) return;
+      var aBefore=captureAnchor(pinchMidX, pinchMidY); // fresh anchor, current fingers, current layout
+      v.scale=pinchLiveScale;
+      layoutPages(); updateZoomOnly(); // V8 smooth: zoom label only
+      restoreAnchor({page:aBefore.page, fx:aBefore.fx, fy:aBefore.fy, x:pinchMidX, y:pinchMidY}); // lock, same frame
+    }
     container.addEventListener('touchstart', function(e){
-      if (e.touches.length!==2) return;
+      if(e.touches.length!==2) return;
       try{ container.style.touchAction='none'; }catch(err){}
+      pinchActive=true; pinchMoved=false;
       pinchStartDist=Math.hypot(e.touches[0].pageX-e.touches[1].pageX, e.touches[0].pageY-e.touches[1].pageY);
       pinchStartScale=v.scale; pinchLiveScale=v.scale;
       pinchMidX=(e.touches[0].clientX+e.touches[1].clientX)/2;
       pinchMidY=(e.touches[0].clientY+e.touches[1].clientY)/2;
-      pinchAnchor=captureAnchor(pinchMidX, pinchMidY);
-      // The ONE canvas under the midpoint — never the whole container.
-      pinchCanvas=null;
-      for (var i=0;i<v.canvases.length;i++){
-        var r=v.canvases[i].getBoundingClientRect();
-        if (pinchMidX>=r.left-4 && pinchMidX<=r.right+4 && pinchMidY>=r.top-4 && pinchMidY<=r.bottom+4){ pinchCanvas=v.canvases[i]; break; }
-      }
+      try{ clearTimeout(v.wheelTimer); }catch(e2){}
     }, { passive:true });
     container.addEventListener('touchmove', function(e){
-      if (e.touches.length!==2 || pinchStartDist<=0) return;
+      if(!pinchActive || e.touches.length!==2 || pinchStartDist<=0) return;
       try{ e.preventDefault(); }catch(err){}
       var dist=Math.hypot(e.touches[0].pageX-e.touches[1].pageX, e.touches[0].pageY-e.touches[1].pageY);
-      if (dist<=0) return;
-      pinchLiveScale=clamp(pinchStartScale*(dist/pinchStartDist), 0.15, 3.5);
+      if(dist<=0) return;
+      pinchLiveScale=clamp(pinchStartScale*(dist/pinchStartDist), 0.15, 3.5); // FULL float, exact finger ratio
       pinchMidX=(e.touches[0].clientX+e.touches[1].clientX)/2;
       pinchMidY=(e.touches[0].clientY+e.touches[1].clientY)/2;
-      if (zoomLabel) zoomLabel.textContent=Math.round(pinchLiveScale*100)+'%';
-      if (pinchCanvas){
-        var ratio=pinchLiveScale/v.scale;
-        var cr=pinchCanvas.getBoundingClientRect();
-        var ox=cr.width>0 ? clamp((pinchMidX-cr.left)/cr.width*100,0,100) : 50;
-        var oy=cr.height>0 ? clamp((pinchMidY-cr.top)/cr.height*100,0,100) : 50;
-        pinchCanvas.style.willChange='transform';
-        pinchCanvas.style.transformOrigin=ox+'% '+oy+'%';
-        pinchCanvas.style.transform='scale('+ratio+')';
-      }
+      pinchMoved=true;
+      if(!pinchRaf) pinchRaf=requestAnimationFrame(pinchApplyLive);
     }, { passive:false });
     function endPinch(){
-      if (pinchStartDist<=0) return;
-      var finalScale=pinchLiveScale, anchor=pinchAnchor;
-      if (pinchCanvas){ pinchCanvas.style.transform=''; pinchCanvas.style.willChange=''; pinchCanvas.style.transformOrigin=''; }
-      pinchCanvas=null; pinchStartDist=0;
+      if(!pinchActive) return;
+      pinchActive=false;
+      if(pinchRaf){ try{ cancelAnimationFrame(pinchRaf); }catch(e){} pinchRaf=0; }
+      if(pinchMoved) pinchApplyLive(); // flush LAST finger position first
       try{ container.style.touchAction='pan-x pan-y'; }catch(err){}
-      if (Math.abs(finalScale - v.scale) > 0.01){ setScale(finalScale, anchor); }
-      else { updateUI(); }
+      if(Math.abs(pinchLiveScale - pinchStartScale) < 0.01){
+        if(Math.abs(v.scale - pinchStartScale) > 0.0005){
+          var aBack=captureAnchor(pinchMidX, pinchMidY);
+          v.scale=pinchStartScale; layoutPages(); updateUI();
+          restoreAnchor({page:aBack.page, fx:aBack.fx, fy:aBack.fy, x:pinchMidX, y:pinchMidY});
+        } else { updateUI(); }
+      } else {
+        // V9: layout + scroll already exact + locked. Only crisp bitmaps remain,
+        // and renderPage now swaps them blink-free (offscreen → drawImage, no white frame).
+        v.renderGen++; v.renderedKey=v.renderedKey.map(function(){ return ''; });
+        updateUI(); renderVisible();
+      }
+      pinchStartDist=0;
     }
-    container.addEventListener('touchend', function(e){ if (e.touches.length<2) endPinch(); }, { passive:true });
+    container.addEventListener('touchend', function(e){ if(e.touches.length<2) endPinch(); }, { passive:true });
     container.addEventListener('touchcancel', function(){ endPinch(); }, { passive:true });
+    // ---- V6 gestures: double-tap zoom only (scroll mode) ----
+    // No swipe-for-page in scroll mode — vertical swipe IS scrolling.
+    // A horizontal swipe here would fight scrolling, so it is removed.
+    var _lastTapT=0, _lastTapX=0, _lastTapY=0;
+    container.addEventListener('touchstart', function(e){
+      if (e.touches.length===1){
+        var now=Date.now();
+        if (now-_lastTapT<350 && Math.abs(e.touches[0].clientX-_lastTapX)<40 && Math.abs(e.touches[0].clientY-_lastTapY)<40){
+          _lastTapT=0;
+          var aDbl=captureAnchor(e.touches[0].clientX, e.touches[0].clientY);
+          if (v.scale > fitWidthScale()+0.02) setScale(fitWidthScale(), aDbl);
+          else setScale(clamp(v.scale*1.5, 0.25, 3.0), aDbl);
+        } else { _lastTapT=now; _lastTapX=e.touches[0].clientX; _lastTapY=e.touches[0].clientY; }
+      }
+    }, { passive:true });
 
     // ---------- LOAD ----------
     try{
@@ -3417,6 +3550,7 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
       // Old code fit only page 1 — a wider page later stayed cut off even at 50% (your screenshot).
       // For normal A4 this is ~60-65%. For your wide Science scan it lands ~38-42% — the 40% you asked for.
       // Floor is now 15%, not 50%, so even very wide scans fit.
+      // V6 SCROLL MODE: open at FIT WIDTH of the WIDEST page, so ALL pages fit on open.
       var avail0=availWidth();
       var widest00=0;
       for (var ii=0;ii<v.dims.length;ii++){ if (v.dims[ii].w>widest00) widest00=v.dims[ii].w; }
@@ -3424,7 +3558,7 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
       // Build DOM ONCE — wrappers + canvases + placeholders.
       for (var p=1;p<=v.total;p++){
         var wrap=document.createElement('div');
-        wrap.style.cssText='position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;flex-shrink:0;';
+        wrap.style.cssText='position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:6px;width:100%;flex-shrink:0;'; // V8: flex-start pins canvas to wrapper top
         wrap.dataset.page=String(p);
         var cv=document.createElement('canvas');
         cv.dataset.page=String(p);
@@ -3439,9 +3573,10 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
       layoutPages();
       updateUI();
       hideLoader();
-      // IntersectionObserver: render a page when it (nearly) enters view. Never re-renders the whole doc.
+      // V6 SCROLL MODE: IntersectionObserver renders a page when it (nearly) enters view.
       try{
         v.observer=new IntersectionObserver(function(entries){
+          if (typeof pinchActive!=='undefined' && pinchActive) return; // V8 smooth: no re-render mid-pinch
           for (var k=0;k<entries.length;k++){ if (entries[k].isIntersecting){ var pn=parseInt(entries[k].target.dataset.page,10); if (pn) renderPage(pn); } }
         }, { root: container, rootMargin:'600px 0px 600px 0px', threshold:0 });
         v.wrappers.forEach(function(w){ v.observer.observe(w); });
@@ -7940,6 +8075,105 @@ input[placeholder="Search school..."]{ position: relative !important; z-index: 3
       });
     }catch(e){}
   }
+  // ---- 2b) ADMIN: Upload Papers card — SAME real-progress pattern as Docs ----
+  function zedAdminPapers(){
+    try{
+      var h2s = document.querySelectorAll('h2');
+      var heading = null;
+      for(var i=0;i<h2s.length;i++){ if(((h2s[i].textContent||'').trim())==='Admin — Uploads'){ heading=h2s[i]; break; } }
+      if(!heading) return;
+      if(heading.offsetParent===null) return;
+      var adminBox = heading.parentElement ? heading.parentElement.parentElement : null;
+      if(!adminBox) adminBox = heading.closest('div.space-y-6') || heading.parentElement;
+      if(!adminBox) return;
+      var grid = null;
+      var divs = adminBox.querySelectorAll('div');
+      for(var g=0;g<divs.length;g++){ var cn = String(divs[g].className||''); if(cn.indexOf('grid')!==-1 && cn.indexOf('grid-cols-1')!==-1){ grid = divs[g]; break; } }
+      if(!grid) grid = adminBox;
+      var docsCard = document.getElementById('zed-admin-docs-card');
+      var existing = document.getElementById('zed-admin-papers-card');
+      if(existing){
+        var _wantNext = (docsCard && docsCard.parentElement===grid) ? docsCard.nextSibling : grid.firstChild;
+        if(existing.parentElement!==grid || (docsCard && existing.previousSibling!==docsCard)){
+          try{ grid.insertBefore(existing, _wantNext); }catch(e){}
+        }
+        try{ existing.style.removeProperty('display'); existing.style.visibility='visible'; }catch(e){}
+        return;
+      }
+      var card = document.createElement('div');
+      card.id='zed-admin-papers-card';
+      card.style.cssText='background:var(--surface);border:2px solid #E8C15A;border-radius:14px;padding:20px;box-sizing:border-box;width:100%;max-width:100%;overflow:hidden;';
+      card.innerHTML = ''
+        + '<div style="font-size:13px;font-weight:900;letter-spacing:.08em;color:#E8C15A;">📄 UPLOAD PAPERS — PDF • With live % progress</div>'
+        + '<div style="margin-top:6px;font-size:11px;color:#A9B8D0;">Use THIS card for papers — it shows real % + MB + speed. React\'s own "Upload Past Paper" below shows no %.</div>'
+        + '<div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;box-sizing:border-box;min-width:0;">'
+        + '<input id="zed-paper2-subject" placeholder="Subject e.g. Maths" style="height:36px;width:100%;min-width:0;box-sizing:border-box;padding:0 8px;border-radius:10px;background:var(--bg);border:1px solid var(--border);color:inherit;font-size:11px;">'
+        + '<input id="zed-paper2-grade" placeholder="Grade e.g. 12" style="height:36px;width:100%;min-width:0;box-sizing:border-box;padding:0 8px;border-radius:10px;background:var(--bg);border:1px solid var(--border);color:inherit;font-size:11px;">'
+        + '<input id="zed-paper2-year" placeholder="Year e.g. 2023" style="height:36px;width:100%;min-width:0;box-sizing:border-box;padding:0 8px;border-radius:10px;background:var(--bg);border:1px solid var(--border);color:inherit;font-size:11px;">'
+        + '<input id="zed-paper2-type" placeholder="Type e.g. GCE" style="height:36px;width:100%;min-width:0;box-sizing:border-box;padding:0 8px;border-radius:10px;background:var(--bg);border:1px solid var(--border);color:inherit;font-size:11px;">'
+        + '</div>'
+        + '<input id="zed-paper2-title" placeholder="Paper title e.g. Maths Paper 1" style="margin-top:12px;width:100%;height:40px;padding:0 12px;border-radius:10px;background:var(--bg);border:1px solid var(--border);color:inherit;font-size:12px;box-sizing:border-box;">'
+        + '<textarea id="zed-paper2-desc" placeholder="Description (optional)" style="margin-top:8px;width:100%;height:60px;padding:8px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--border);color:inherit;font-size:12px;box-sizing:border-box;"></textarea>'
+        + '<input id="zed-paper2-file" type="file" accept=".pdf,application/pdf" style="margin-top:12px;width:100%;font-size:11px;">'
+        + '<div id="zed-paper2-progress" style="display:none;margin-top:10px;"><div style="height:10px;background:#222;border-radius:999px;overflow:hidden;"><div id="zed-paper2-progress-bar" style="height:10px;width:0%;background:#E8C15A;border-radius:999px;transition:width .15s;"></div></div><div id="zed-paper2-progress-text" style="margin-top:6px;font-size:11px;color:#E8C15A;text-align:center;">0% • 0 MB / 0 MB</div></div>'
+        + '<button id="zed-paper2-upload" type="button" style="margin-top:12px;width:100%;height:44px;border-radius:10px;background:#E8C15A;color:#000;font-weight:900;text-transform:uppercase;letter-spacing:.12em;font-size:12px;border:none;cursor:pointer;">Upload Paper → Papers Tab</button>'
+        + '<div id="zed-paper2-status" style="margin-top:8px;font-size:11px;color:#A9B8D0;text-align:center;">Papers appear in the PAPERS tab for all students.</div>';
+      if(docsCard && docsCard.parentElement===grid){ try{ grid.insertBefore(card, docsCard.nextSibling); }catch(e){ try{ grid.appendChild(card); }catch(_e){ return; } } }
+      else { try{ grid.insertBefore(card, grid.firstChild); }catch(e){ try{ grid.appendChild(card); }catch(_e){ return; } } }
+      var btn = card.querySelector('#zed-paper2-upload');
+      btn.addEventListener('click', async function(){
+        var subj = (card.querySelector('#zed-paper2-subject').value||'').trim();
+        var grade = (card.querySelector('#zed-paper2-grade').value||'').trim();
+        var year = (card.querySelector('#zed-paper2-year').value||'').trim();
+        var ptype = (card.querySelector('#zed-paper2-type').value||'').trim();
+        var title = (card.querySelector('#zed-paper2-title').value||'').trim();
+        var desc = (card.querySelector('#zed-paper2-desc').value||'').trim();
+        var file = card.querySelector('#zed-paper2-file').files[0];
+        var st = card.querySelector('#zed-paper2-status');
+        if(!file){ st.textContent='Pick a PDF first.'; st.style.color='#FF6B6B'; return; }
+        if(!title){ title = file.name.replace(/\.[^.]+$/,'').replace(/[_\-]+/g,' ').trim() || 'Untitled Paper'; }
+        btn.disabled=true; btn.textContent='Uploading...'; st.textContent='Uploading paper... keep this tab open'; st.style.color='#E8C15A';
+        try{
+          var safe = file.name.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9._-]/g,'');
+          var fname = Date.now()+'_'+safe;
+          var upRes = await window.zedUploadWithProgress(file,'past_papers',fname,function(p){ window.zedShowUploadProgress('paper',p,file); try{ var b=document.getElementById('zed-paper2-progress'); if(b) b.style.display='block'; var bar=document.getElementById('zed-paper2-progress-bar'); if(bar) bar.style.width=p.percent+'%'; var t=document.getElementById('zed-paper2-progress-text'); if(t) t.textContent=p.percent+'% • '+p.upMB+' MB / '+p.totalMB+' MB • '+p.speed; }catch(_e){} });
+          var pub='';
+          if(upRes.error){
+            var up2Res = await window.zedUploadWithProgress(file,'documents',fname,function(p){ window.zedShowUploadProgress('paper',p,file); });
+            if(up2Res.error) throw new Error('Upload failed: '+(upRes.error&&upRes.error.message||'check connection / bucket'));
+            pub = SUPA_URL+'/storage/v1/object/public/documents/'+encodeURIComponent(fname);
+          } else {
+            pub = SUPA_URL+'/storage/v1/object/public/past_papers/'+encodeURIComponent(fname);
+          }
+          var user = zedUser();
+          var ins = await fetch(SUPA_URL+'/rest/v1/past_papers', {method:'POST', headers:{apikey:SUPA_KEY, Authorization:'Bearer '+SUPA_KEY, 'Content-Type':'application/json', Prefer:'return=representation'}, body: JSON.stringify({subject:subj||'', grade:grade||'', year:year||'', paper_type:ptype||'', title:title, description:desc, file_url:pub, file_name:safe, uploaded_by: user&&user.id?user.id:null})});
+          if(!ins.ok) throw new Error('Paper uploaded but could not save record. Check past_papers table.');
+          st.textContent='Paper uploaded ✓ It is now in the PAPERS tab.'; st.style.color='#E8C15A';
+          try{ setTimeout(function(){ var b=document.getElementById('zed-paper2-progress'); if(b) b.style.display='none'; },2000); }catch(_e){}
+          card.querySelector('#zed-paper2-title').value=''; card.querySelector('#zed-paper2-desc').value=''; card.querySelector('#zed-paper2-file').value='';
+        }catch(e){
+          st.textContent = e.message||'Upload failed.'; st.style.color='#FF6B6B';
+        } finally { btn.disabled=false; btn.textContent='Upload Paper → Papers Tab'; }
+      });
+    }catch(e){}
+  };
+  var _reactPaperWasUploading=false;
+  function zedWatchReactPaperUpload(){
+    try{
+      var uploading=false;
+      document.querySelectorAll('button').forEach(function(b){ if(((b.textContent||'').trim())==='Uploading live...') uploading=true; });
+      if(uploading && !_reactPaperWasUploading){
+        _reactPaperWasUploading=true;
+        try{ window.zedShowUploadProgress('paper', {percent:50, upMB:'…', totalMB:'…', speed:'', eta:''}, {name:'Paper (React upload — no live %)'}); }catch(e){}
+        try{ var m=document.getElementById('zed-upload-progress-meta'); if(m) m.textContent='Uploading… keep this tab open • React upload shows no % — use the yellow UPLOAD PAPERS card above for live % + MB'; }catch(e){}
+      } else if(!uploading && _reactPaperWasUploading){
+        _reactPaperWasUploading=false;
+        try{ window.zedUploadProgressDone('paper', true, 'Uploaded ✓'); }catch(e){}
+        try{ zedToast('Paper upload finished — check PAPERS tab'); }catch(e){}
+      }
+    }catch(e){}
+  }
+
   // Helper: from anywhere, jump straight to Admin Docs card
   window.zedGoToAdminDocs = function(){
     try{
@@ -8049,8 +8283,8 @@ input[placeholder="Search school..."]{ position: relative !important; z-index: 3
      file. This snippet only handled notification clicks, which now live in
      the real sw.js (shipped with this file). Leaving it here meant a
      second, broken worker registration fighting the real one. */
-   setInterval(function(){ try{ zedAdminDocs(); }catch(e){} try{ zedInjectReminderCard(); }catch(e){} try{ zedCheckDaily(); }catch(e){} }, 1000);
-  setTimeout(function(){ try{ zedAdminDocs(); }catch(e){} try{ zedInjectReminderCard(); }catch(e){} }, 1500);
+   setInterval(function(){ try{ zedAdminDocs(); }catch(e){} try{ zedAdminPapers(); }catch(e){} try{ zedWatchReactPaperUpload(); }catch(e){} try{ zedInjectReminderCard(); }catch(e){} try{ zedCheckDaily(); }catch(e){} }, 1000);
+  setTimeout(function(){ try{ zedAdminDocs(); }catch(e){} try{ zedAdminPapers(); }catch(e){} try{ zedInjectReminderCard(); }catch(e){} }, 1500);
 })();
 </script>
 
@@ -9365,7 +9599,7 @@ header *{ transition:none!important; animation:none!important; }
     el.style.cssText = 'position:fixed;left:12px;right:12px;bottom:84px;z-index:999999;background:#0F2547;border:2px solid #E8C15A;border-radius:16px;padding:14px 14px 12px;box-shadow:0 16px 50px rgba(0,0,0,.6);display:none;font-family:inherit;';
     el.innerHTML =
       '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">'
-      + '<div id="zed-up-title" style="font-weight:900;font-size:13px;color:#04101F;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Uploading…</div>'
+      + '<div id="zed-up-title" style="font-weight:900;font-size:13px;color:#FFFFFF;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Uploading…</div>'
       + '<button id="zed-up-cancel" type="button" style="flex-shrink:0;background:#ff6b6b;color:#fff;border:none;border-radius:999px;padding:6px 12px;font-size:11px;font-weight:900;cursor:pointer;">Cancel ✕</button>'
       + '</div>'
       + '<div style="height:14px;background:#0F2547;border-radius:999px;overflow:hidden;margin-top:10px;border:1px solid #C9A227;">'
@@ -12829,7 +13063,7 @@ window._zedV15Filter = 'search';
     el.style.cssText = 'display:none;position:fixed;left:12px;right:12px;bottom:76px;z-index:999999;background:#0F2547;border:1px solid #E8C15A;border-radius:14px;padding:14px;box-shadow:0 16px 40px rgba(0,0,0,.5);';
     var title = document.createElement('div');
     title.id = 'zed-upload-progress-title';
-    title.style.cssText = 'font-size:13px;font-weight:900;color:#04101F;';
+    title.style.cssText = 'font-size:13px;font-weight:900;color:#FFFFFF;';
     title.textContent = 'Uploading...';
     var barWrap = document.createElement('div');
     barWrap.style.cssText = 'height:12px;background:#222;border-radius:999px;overflow:hidden;margin-top:10px;';
@@ -12844,7 +13078,7 @@ window._zedV15Filter = 'search';
     var cancel = document.createElement('button');
     cancel.type = 'button';
     cancel.textContent = 'Cancel upload';
-    cancel.style.cssText = 'margin-top:10px;width:100%;height:32px;border-radius:999px;background:transparent;border:1px solid #555;color:#04101F;font-size:11px;font-weight:800;cursor:pointer;';
+    cancel.style.cssText = 'margin-top:10px;width:100%;height:32px;border-radius:999px;background:transparent;border:1px solid #E8C15A;color:#FFFFFF;font-size:11px;font-weight:800;cursor:pointer;';
     cancel.addEventListener('click', function(){
       try{ if(window.__zedCurrentUploadXhr) window.__zedCurrentUploadXhr.abort(); }catch(e){}
       try{ el.style.display='none'; }catch(e){}
@@ -13632,17 +13866,31 @@ window._zedV15Filter = 'search';
   }
   async function downloadFinal(card, url, title){
     var f=card._zedFinal; if(!f) return;
-    var btn=f.btn; btn.dataset.downloading='1'; btn.textContent='Downloading... 0%'; btn.className='zed-final-btn downloading';
+    var btn=f.btn; btn.dataset.downloading='1'; btn.dataset.fallback=''; f.fallbackUrl='';
+    btn.textContent='Downloading... 0%'; btn.className='zed-final-btn downloading';
     f.prog.classList.add('show'); f.progText.classList.add('show'); f.progText.textContent='Downloading... 0%';
     try{
       if(isOffline()) throw new Error('offline');
-      var resp=await fetch(url, {mode:'cors', cache:'no-store'}); if(!resp.ok) throw new Error('Network '+resp.status);
+      var resp=await fetch(url, {mode:'cors', cache:'no-store'}); if(!resp.ok) throw new Error('Server '+resp.status);
       var total=Number(resp.headers.get('Content-Length'))||0;
-      if(!resp.body){ var b0=await resp.blob(); await putRec({id:fileIdFor(url), blob:b0, url:url, title:title, type:'paper', savedAt:Date.now(), size:b0.size}); finishFinal(card); return; }
-      var reader=resp.body.getReader(); var chunks=[]; var received=0;
-      while(true){ var r=await reader.read(); if(r.done) break; chunks.push(r.value); received+=r.value.byteLength; var pct=total?Math.round(received/total*100):0; if(total){ f.progFill.style.width=pct+'%'; f.progText.textContent='Downloading... '+pct+'% • '+fmt(received)+' of '+fmt(total); btn.textContent='Downloading... '+pct+'%'; } else { f.progText.textContent='Downloading... '+fmt(received); btn.textContent='Downloading... '+fmt(received); } }
-      var blob=new Blob(chunks,{type:'application/pdf'}); await putRec({id:fileIdFor(url), blob:blob, url:url, title:title, type:'paper', savedAt:Date.now(), size:blob.size}); finishFinal(card);
-    }catch(err){ btn.dataset.downloading='0'; btn.textContent='Download'; btn.className='zed-final-btn download'; f.prog.classList.remove('show'); f.progText.classList.remove('show'); toast(isOffline() ? 'You are offline — connect once to download' : 'Download failed - tap to retry'); }
+      var blob;
+      if(!resp.body){ blob=await resp.blob(); }
+      else {
+        var reader=resp.body.getReader(); var chunks=[]; var received=0;
+        while(true){ var r=await reader.read(); if(r.done) break; chunks.push(r.value); received+=r.value.byteLength; var pct=total?Math.round(received/total*100):0; if(total){ f.progFill.style.width=pct+'%'; f.progText.textContent='Downloading... '+pct+'% • '+fmt(received)+' of '+fmt(total); btn.textContent='Downloading... '+pct+'%'; } else { f.progText.textContent='Downloading... '+fmt(received); btn.textContent='Downloading... '+fmt(received); } }
+        blob=new Blob(chunks,{type:'application/pdf'});
+      }
+      try{ await putRec({id:fileIdFor(url), blob:blob, url:url, title:title, type:'paper', savedAt:Date.now(), size:blob.size}); finishFinal(card); }
+      catch(_saveErr){ btn.dataset.downloading='0'; btn.textContent='Download'; btn.className='zed-final-btn download'; f.prog.classList.remove('show'); f.progText.classList.remove('show'); toast('Paper downloaded but could not save to phone — opening it now'); try{ openPaperFinal({blob:blob, id:fileIdFor(url)}, title); }catch(_e){ try{ window.open(url,'_blank'); }catch(_e2){} } }
+    }catch(err){
+      btn.dataset.downloading='0'; btn.dataset.fallback='1'; f.fallbackUrl=url;
+      btn.textContent='Open in browser →'; btn.className='zed-final-btn download';
+      f.prog.classList.remove('show'); f.progText.classList.remove('show');
+      var _why = isOffline() ? 'You are offline — connect once to download' : ('Download failed ('+(err&&err.message||'network')+')');
+      if(location.protocol==='file:' || location.protocol==='content:' || location.protocol==='blob:') _why += ' • You opened this file from Downloads — open it from zed-scholar.pages.dev instead, browsers block downloads from a local file';
+      _why += ' — tap again to open in browser';
+      toast(_why);
+    }
   }
   function finishFinal(card){ var f=card._zedFinal; if(!f) return; f.btn.dataset.downloading='0'; f.btn.textContent='Open'; f.btn.className='zed-final-btn open'; f.tick.classList.remove('hidden'); f.prog.classList.remove('show'); f.progText.classList.remove('show'); toast('Saved ✓ • Tap Open to view'); }
   function transformFinal(card){
@@ -13671,8 +13919,11 @@ window._zedV15Filter = 'search';
     var prog=document.createElement('div'); prog.className='zed-final-progress'; var fill=document.createElement('div'); prog.appendChild(fill);
     var ptxt=document.createElement('div'); ptxt.className='zed-final-progress-text'; ptxt.textContent='Downloading... 0%';
     ui.appendChild(row); ui.appendChild(prog); ui.appendChild(ptxt); card.appendChild(ui);
-    card._zedFinal={title:title, url:url, tick:tick, btn:btn, prog:prog, progFill:fill, progText:ptxt};
-    btn.onclick=async function(e){ e.preventDefault(); e.stopPropagation(); var rec=await getRec(fileIdFor(url)); if(rec && rec.blob){ openPaperFinal(rec, title); return; } if(btn.dataset.downloading==='1') return; downloadFinal(card, url, title); };
+    card._zedFinal={title:title, url:url, tick:tick, btn:btn, prog:prog, progFill:fill, progText:ptxt, fallbackUrl:''};
+    btn.onclick=async function(e){ e.preventDefault(); e.stopPropagation();
+      try{ if(card._zedFinal && card._zedFinal.fallbackUrl){ var _fu=card._zedFinal.fallbackUrl; card._zedFinal.fallbackUrl=''; btn.dataset.fallback=''; window.open(_fu,'_blank'); return; } }catch(_e){}
+      var rec=null; try{ rec=await getRec(fileIdFor(url)); }catch(_ge){ rec=null; }
+      if(rec && rec.blob){ openPaperFinal(rec, title); return; } if(btn.dataset.downloading==='1') return; downloadFinal(card, url, title); };
     updateFinalState(card);
   }
   function openPaperFinal(rec, title){
