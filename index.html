@@ -3974,7 +3974,7 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
 <script>
 // === ZED SCHOLAR V26 PWA AUTO-UPDATE ===
 if ('serviceWorker' in navigator && (location.protocol==='https:' || location.protocol==='http:')) {
-  navigator.serviceWorker.register('./sw.js?v=25').then(reg => {
+  navigator.serviceWorker.register('./sw.js?v=26').then(reg => {
     // Check for update immediately and every hour
     reg.update();
     setInterval(() => reg.update(), 60 * 60 * 1000);
@@ -14050,14 +14050,16 @@ window._zedV15Filter = 'search';
         blob=new Blob(chunks,{type:'application/pdf'});
       }
       try{ await putRec({id:fileIdFor(url), blob:blob, url:url, title:title, type:'paper', savedAt:Date.now(), size:blob.size}); finishFinal(card); }
-      catch(_saveErr){ btn.dataset.downloading='0'; btn.textContent='Download'; btn.className='zed-final-btn download'; f.prog.classList.remove('show'); f.progText.classList.remove('show'); toast('Paper downloaded but could not save to phone — opening it now'); try{ openPaperFinal({blob:blob, id:fileIdFor(url)}, title); }catch(_e){ try{ window.open(url,'_blank'); }catch(_e2){} } }
+      catch(_saveErr){ btn.dataset.downloading='0'; btn.textContent='Download'; btn.className='zed-final-btn download'; f.prog.classList.remove('show'); f.progText.classList.remove('show'); toast('Paper downloaded but could not save to phone — opening it now'); try{ openPaperFinal({blob:blob, id:fileIdFor(url)}, title); }catch(_e){ toast('Could not save to phone — tap Download to try again'); } }
     }catch(err){
-      btn.dataset.downloading='0'; btn.dataset.fallback='1'; f.fallbackUrl=url;
-      btn.textContent='Open in browser →'; btn.className='zed-final-btn download';
+      // OFFLINE FIX: never turn Download into "Open in browser".
+      // Offline has no browser to open, and the paper is not saved yet.
+      // Keep it as Download so tapping again just retries when back online.
+      btn.dataset.downloading='0'; btn.dataset.fallback=''; f.fallbackUrl='';
+      btn.textContent='Download'; btn.className='zed-final-btn download';
       f.prog.classList.remove('show'); f.progText.classList.remove('show');
-      var _why = isOffline() ? 'You are offline — connect once to download' : ('Download failed ('+(err&&err.message||'network')+')');
+      var _why = isOffline() ? 'You are offline — connect to the internet once to download this paper' : ('Download failed ('+(err&&err.message||'network')+') — tap Download to try again');
       if(location.protocol==='file:' || location.protocol==='content:' || location.protocol==='blob:') _why += ' • You opened this file from Downloads — open it from zed-scholar.pages.dev instead, browsers block downloads from a local file';
-      _why += ' — tap again to open in browser';
       toast(_why);
     }
   }
@@ -14090,9 +14092,14 @@ window._zedV15Filter = 'search';
     ui.appendChild(row); ui.appendChild(prog); ui.appendChild(ptxt); card.appendChild(ui);
     card._zedFinal={title:title, url:url, tick:tick, btn:btn, prog:prog, progFill:fill, progText:ptxt, fallbackUrl:''};
     btn.onclick=async function(e){ e.preventDefault(); e.stopPropagation();
-      try{ if(card._zedFinal && card._zedFinal.fallbackUrl){ var _fu=card._zedFinal.fallbackUrl; card._zedFinal.fallbackUrl=''; btn.dataset.fallback=''; window.open(_fu,'_blank'); return; } }catch(_e){}
+      // No "Open in browser" fallback — clear any old fallback left from before this fix.
+      try{ if(card._zedFinal){ card._zedFinal.fallbackUrl=''; } btn.dataset.fallback=''; }catch(_e){}
       var rec=null; try{ rec=await getRec(fileIdFor(url)); }catch(_ge){ rec=null; }
-      if(rec && rec.blob){ openPaperFinal(rec, title); return; } if(btn.dataset.downloading==='1') return; downloadFinal(card, url, title); };
+      if(rec && rec.blob){ openPaperFinal(rec, title); return; }
+      if(btn.dataset.downloading==='1') return;
+      // OFFLINE: paper is not saved yet, so Download cannot work. Stay on Download, just tell them.
+      if(isOffline()){ toast('You are offline — connect to the internet once to download this paper'); return; }
+      downloadFinal(card, url, title); };
     updateFinalState(card);
   }
   function openPaperFinal(rec, title){
