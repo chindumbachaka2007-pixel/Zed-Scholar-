@@ -1,6 +1,7 @@
-var CACHE_NAME = 'zed-scholar-v22';
-var RUNTIME_CACHE = 'zed-scholar-runtime-v22';
-var PDF_CACHE = 'zed-scholar-pdfs-v22';
+var CACHE_NAME = 'zed-scholar-v24';
+var RUNTIME_CACHE = 'zed-scholar-runtime-v24';
+var PDF_CACHE = 'zed-scholar-pdfs-v24';
+var WIDGET_CACHE = 'zed-widget-v24';
 var PRECACHE_URLS = [
   '/',
   '/index.html',
@@ -26,7 +27,7 @@ self.addEventListener('activate', function (event) {
     caches.keys().then(function (names) {
       return Promise.all(
         names.map(function (name) {
-          if (name !== CACHE_NAME && name !== RUNTIME_CACHE && name !== PDF_CACHE) {
+          if (name !== CACHE_NAME && name !== RUNTIME_CACHE && name !== PDF_CACHE && name !== WIDGET_CACHE) {
             return caches.delete(name);
           }
         })
@@ -62,12 +63,64 @@ self.addEventListener('periodicsync', function (event) {
     );
   }
 });
+
+// ===== PWABuilder: Background Sync (one-time) + Push Notifications =====
+// Background Sync: when the page was offline and comes back online, it registers
+// 'zed-sync'. The SW then retries the shell refresh. This is DIFFERENT from
+// periodicsync (daily) — this one runs when connection returns.
+self.addEventListener('sync', function (event) {
+  if (event.tag === 'zed-sync') {
+    event.waitUntil(
+      caches.open(CACHE_NAME).then(function (cache) {
+        return cache.add('/manifest.json').catch(function () {});
+      }).catch(function () {})
+    );
+  }
+});
+
+// Push: show a notification even if the app is closed.
+// To actually SEND pushes you need a server + VAPID keys (see v13 HTML comment).
+// This handler alone is what PWABuilder checks for, and it works once you send a push.
+self.addEventListener('push', function (event) {
+  var data = {};
+  try { data = event.data ? event.data.json() : {}; } catch (e) { try { data = { body: event.data.text() }; } catch (e2) {} }
+  var title = data.title || 'ZED SCHOLAR';
+  var options = {
+    body: data.body || 'New ECZ past paper or quiz is ready.',
+    icon: '/icon-192.png',
+    badge: '/icon-192.png',
+    data: { url: (data.url || data.actionUrl) || '/?source=push' }
+  };
+  event.waitUntil(self.registration.showNotification(title, options));
+});
 self.addEventListener('fetch', function (event) {
   var request = event.request;
   if (request.method !== 'GET') return;
   var url;
   try { url = new URL(request.url); } catch (e) { return; }
   if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+
+  // Zed Continue widget: serve the last-saved continue data first (saved by the page
+  // into WIDGET_CACHE), else network, else built-in default. Never fails the widget.
+  if (url.pathname === '/widgets/zed-continue.json') {
+    event.respondWith(
+      caches.open(WIDGET_CACHE).then(function (wcache) {
+        return wcache.match('/widgets/zed-continue.json').then(function (saved) {
+          if (saved) return saved;
+          return fetch(request).then(function (net) {
+            if (net && net.status === 200) {
+              var copy = net.clone();
+              wcache.put('/widgets/zed-continue.json', copy).catch(function () {});
+            }
+            return net;
+          }).catch(function () {
+            return new Response(JSON.stringify({ title: 'Continue studying - ECZ Past Papers', subtitle: 'Form 1-6 & Grade 10-12 - Marking schemes - Works offline', actionTitle: 'Open Zed Scholar', actionUrl: '/?source=widget' }), { headers: { 'Content-Type': 'application/json' } });
+          });
+        });
+      })
+    );
+    return;
+  }
   if (
     url.hostname.indexOf('googlesyndication') !== -1 ||
     url.hostname.indexOf('youtube') !== -1 ||
@@ -158,12 +211,13 @@ self.addEventListener('fetch', function (event) {
 });
 self.addEventListener('notificationclick', function (event) {
   event.notification.close();
+  var target = (event.notification.data && event.notification.data.url) || '/';
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (list) {
       for (var i = 0; i < list.length; i++) {
         if ('focus' in list[i]) return list[i].focus();
       }
-      if (self.clients.openWindow) return self.clients.openWindow('/');
+      if (self.clients.openWindow) return self.clients.openWindow(target);
     })
   );
 });

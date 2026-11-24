@@ -7,8 +7,8 @@
   "scope": "/",
   "display": "standalone",
   "display_override": [
-    "window-controls-overlay",
-    "tabbed"
+    "tabbed",
+    "window-controls-overlay"
   ],
   "orientation": "portrait",
   "lang": "en-ZM",
@@ -99,7 +99,7 @@
       "description": "Pick up where you left off in Zed Scholar.",
       "tag": "zed-continue",
       "template": "zed-continue",
-      "ms_ac_template": "widgets/zed-continue.json",
+      "ms_ac_template": "widgets/zed-continue-template.json",
       "data": "widgets/zed-continue.json",
       "type": "application/json",
       "screenshots": [
@@ -117,6 +117,78 @@
       ],
       "auth": false,
       "update": 86400
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Past Papers",
+      "short_name": "Papers",
+      "description": "Browse ECZ past papers",
+      "url": "/?shortcut=papers",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Take a Quiz",
+      "short_name": "Quiz",
+      "description": "Take an ECZ quiz",
+      "url": "/?shortcut=quiz",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Offline Library",
+      "short_name": "Offline",
+      "description": "Open your downloaded papers",
+      "url": "/?shortcut=offline",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Ask Zed AI",
+      "short_name": "Ask AI",
+      "description": "Ask Zed AI a question",
+      "url": "/?shortcut=chat",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/?openfile=1",
+      "accept": {
+        "application/pdf": [
+          ".pdf"
+        ]
+      },
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ],
+      "launch_type": "single-client"
     }
   ]
 }

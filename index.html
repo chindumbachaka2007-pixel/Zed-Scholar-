@@ -3962,7 +3962,7 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
 <script>
 // === ZED SCHOLAR V26 PWA AUTO-UPDATE ===
 if ('serviceWorker' in navigator && (location.protocol==='https:' || location.protocol==='http:')) {
-  navigator.serviceWorker.register('./sw.js?v=22').then(reg => {
+  navigator.serviceWorker.register('./sw.js?v=24').then(reg => {
     // Check for update immediately and every hour
     reg.update();
     setInterval(() => reg.update(), 60 * 60 * 1000);
@@ -3993,6 +3993,32 @@ if ('serviceWorker' in navigator && (location.protocol==='https:' || location.pr
     }
   }catch(e){}
   try{
+    // Background Sync (one-time): if we were offline, retry when back online.
+    // Page registers 'zed-sync' on the 'online' event; SW handles it (see sw.js v24).
+    if (navigator.serviceWorker && navigator.serviceWorker.ready){
+      var registerZedSync = function(){
+        try{ navigator.serviceWorker.ready.then(function(reg){ try{ if ('sync' in reg) reg.sync.register('zed-sync'); }catch(e){} }); }catch(e){}
+      };
+      window.addEventListener('online', registerZedSync);
+      if (!navigator.onLine) registerZedSync();
+    }
+  }catch(e){}
+  // Push helper: call window.zedEnablePush(VAPID_PUBLIC_KEY) from your own button / settings.
+  // You need a server + VAPID keys to SEND pushes. Without them, the SW push handler still
+  // exists (so PWABuilder passes), but no push will ever arrive. Replace the placeholder key.
+  window.zedEnablePush = async function(vapidPublicKey){
+    try{
+      if (!vapidPublicKey || vapidPublicKey.indexOf('REPLACE') !== -1){ console.log('[ZED] Push: add your VAPID public key first'); return null; }
+      var perm = await Notification.requestPermission();
+      if (perm !== 'granted') return null;
+      var reg = await navigator.serviceWorker.ready;
+      var key = Uint8Array.from(atob(vapidPublicKey.replace(/-/g, '+').replace(/_/g, '/')), function(c){ return c.charCodeAt(0); });
+      var sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+      try{ localStorage.setItem('zed-push-sub', JSON.stringify(sub)); }catch(e){}
+      return sub;
+    }catch(e){ console.log('[ZED] Push subscribe failed', e); return null; }
+  };
+  try{
     // launch_handler: when the OS launches the app again (e.g. from Share / protocol),
     // focus the existing window instead of opening a duplicate.
     if ('launchQueue' in window && window.launchQueue && window.launchQueue.setConsumer){
@@ -4000,6 +4026,21 @@ if ('serviceWorker' in navigator && (location.protocol==='https:' || location.pr
         try{
           var u = params && params.targetURL ? new URL(params.targetURL) : null;
           if (u) handleZedIncomingURL(u);
+          // file_handlers: user opened a PDF with Zed Scholar (double-click a .pdf -> app).
+          if (params && params.files && params.files.length){
+            params.files.forEach(function(handle){
+              try{
+                handle.getFile().then(function(file){
+                  try{
+                    var blobUrl = URL.createObjectURL(file);
+                    try{ localStorage.setItem('zed-open-file', JSON.stringify({ name: file.name, url: blobUrl })); }catch(e){}
+                    if (window.__zedOpenFile) window.__zedOpenFile(file, blobUrl);
+                    else if (window.__zedOpenPaper) window.__zedOpenPaper(file.name);
+                  }catch(e){}
+                }).catch(function(){});
+              }catch(e){}
+            });
+          }
         }catch(e){}
       });
     }
@@ -4026,8 +4067,50 @@ if ('serviceWorker' in navigator && (location.protocol==='https:' || location.pr
         try{ localStorage.setItem('zed-new-note', '1'); }catch(e){}
         if (window.__zedNewNote) window.__zedNewNote();
       }
+      // shortcuts: long-press app icon -> Past Papers / Quiz / Offline / Ask AI (/?shortcut=...)
+      var shortcut = p.get('shortcut');
+      if (shortcut){
+        try{ localStorage.setItem('zed-shortcut', shortcut); }catch(e){}
+        if (window.__zedShortcut) window.__zedShortcut(shortcut);
+        else if (shortcut === 'papers' && window.__zedSetSearch) window.__zedSetSearch('');
+      }
+      // file_handlers: opened via /?openfile=1 — the real file comes via launchQueue above.
+      if (p.get('openfile') === '1'){
+        try{ localStorage.setItem('zed-openfile', '1'); }catch(e){}
+      }
     }catch(e){}
   }
+  // ===== V12 Zed Continue: save last paper so the Windows widget shows the REAL one =====
+  // The widget reads /widgets/zed-continue.json from the SW, which serves what we save here.
+  // Call it from anywhere: window.zedSaveContinue('Maths Grade 12 2023', '/?paper=Maths...')
+  window.zedSaveContinue = function(title, url){
+    try{
+      var clean = String(title || '').trim() || 'Continue studying - ECZ Past Papers';
+      var link = String(url || '/?source=widget').trim() || '/?source=widget';
+      var data = { title: clean, subtitle: 'Tap to continue where you left off', actionTitle: 'Continue', actionUrl: link };
+      try{ localStorage.setItem('zed-continue', JSON.stringify(data)); }catch(e){}
+      // Save into the widget cache so the SW serves it to the widget (page can't write SW files).
+      if ('caches' in window){
+        caches.open('zed-widget-v23').then(function(c){
+          try{ c.put('/widgets/zed-continue.json', new Response(JSON.stringify(data), { headers: { 'Content-Type': 'application/json' } })); }catch(e){}
+        }).catch(function(){});
+      }
+    }catch(e){}
+  };
+  try{
+    // If we were opened via ?paper= / ?q= (protocol / widget / share), save that as Continue.
+    var _pp = new URL(window.location.href).searchParams.get('paper') || new URL(window.location.href).searchParams.get('q');
+    if (_pp) window.zedSaveContinue(_pp, '/?paper=' + encodeURIComponent(_pp));
+    // If another tab / the app saved zed-open-paper, pick it up too (poll, cheap + safe).
+    var _lastSeen = '';
+    try{ _lastSeen = localStorage.getItem('zed-open-paper') || ''; }catch(e){}
+    setInterval(function(){
+      try{
+        var cur = localStorage.getItem('zed-open-paper') || '';
+        if (cur && cur !== _lastSeen){ _lastSeen = cur; window.zedSaveContinue(cur, '/?paper=' + encodeURIComponent(cur)); }
+      }catch(e){}
+    }, 2000);
+  }catch(e){}
   try{
     // window-controls-overlay (display_override): let the page use the title-bar area on Windows.
     // CSS env() vars give the safe area; we expose them as CSS vars for your header if you use them.
