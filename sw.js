@@ -1,13 +1,15 @@
 var CACHE_NAME = 'zed-scholar-v25';
 var RUNTIME_CACHE = 'zed-scholar-runtime-v25';
 var PDF_CACHE = 'zed-scholar-pdfs-v25';
-var WIDGET_CACHE = 'zed-widget-v24';
+var WIDGET_CACHE = 'zed-widget-v25';
 var PRECACHE_URLS = [
   '/',
   '/index.html',
   '/manifest.json',
   '/icon-192.png',
-  '/icon-512.png'
+  '/icon-512.png',
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'
 ];
 self.addEventListener('install', function (event) {
   event.waitUntil(
