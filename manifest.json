@@ -1,36 +1,122 @@
 {
-  "name": "Zed Scholar- ECZ exams made easier by Zed Scholar",
+  "name": "ZED SCHOLAR - ECZ Past Papers",
   "short_name": "Zed Scholar",
   "description": "Free ECZ past papers for Senior Secondary in Zambia - Form 1-6 & Grade 10-12 with marking schemes, quizzes & videos. Works offline.",
-  "start_url": "./",
-  "scope": "./",
-  "id": "./",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "tabbed"
+  ],
   "orientation": "portrait",
-  "background_color": "#081A33",
-  "theme_color": "#081A33",
   "lang": "en-ZM",
+  "dir": "ltr",
+  "theme_color": "#04101F",
+  "background_color": "#04101F",
   "categories": [
     "education"
   ],
+  "handle_links": "preferred",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Zed Scholar - ECZ Past Papers"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Zed Scholar on desktop"
+    }
+  ],
+  "launch_handler": {
+    "client_mode": [
+      "focus-existing"
+    ]
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+zedscholar",
+      "url": "/?paper=%s"
+    },
+    {
+      "protocol": "web+ecz",
+      "url": "/?q=%s"
+    }
+  ],
+  "share_target": {
+    "action": "/?share=1",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "note_taking": {
+    "new_note_url": "/?note=new"
+  },
+  "widgets": [
+    {
+      "name": "Continue Studying",
+      "short_name": "Continue",
+      "description": "Pick up where you left off in Zed Scholar.",
+      "tag": "zed-continue",
+      "template": "zed-continue",
+      "ms_ac_template": "widgets/zed-continue.json",
+      "data": "widgets/zed-continue.json",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "label": "Continue studying"
+        }
+      ],
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ],
+      "auth": false,
+      "update": 86400
     }
   ]
 }

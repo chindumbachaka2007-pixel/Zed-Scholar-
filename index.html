@@ -3962,7 +3962,7 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
 <script>
 // === ZED SCHOLAR V26 PWA AUTO-UPDATE ===
 if ('serviceWorker' in navigator && (location.protocol==='https:' || location.protocol==='http:')) {
-  navigator.serviceWorker.register('./sw.js?v=20').then(reg => {
+  navigator.serviceWorker.register('./sw.js?v=22').then(reg => {
     // Check for update immediately and every hour
     reg.update();
     setInterval(() => reg.update(), 60 * 60 * 1000);
@@ -3976,6 +3976,67 @@ if ('serviceWorker' in navigator && (location.protocol==='https:' || location.pr
       };
     };
   }).catch(err => console.log('[ZED] SW register failed', err));
+
+  // ===== V10 PWA: periodic sync + launch / share / protocol / note handling =====
+  // These match the new manifest.json (launch_handler, protocol_handlers, share_target, note_taking).
+  // All are safe no-ops on browsers that don't support them.
+  try{
+    // Periodic background sync — refreshes the shell once a day (see sw-pwa-additions.js).
+    // Requires Chrome + installed PWA + permission; silently skips otherwise.
+    if ('periodicSync' in window && navigator.serviceWorker && navigator.serviceWorker.ready){
+      navigator.serviceWorker.ready.then(async function(reg){
+        try{
+          var st = await navigator.permissions.query({ name: 'periodic-background-sync' });
+          if (st.state === 'granted') await reg.periodicSync.register('zed-content-sync', { minInterval: 24*60*60*1000 });
+        }catch(e){}
+      });
+    }
+  }catch(e){}
+  try{
+    // launch_handler: when the OS launches the app again (e.g. from Share / protocol),
+    // focus the existing window instead of opening a duplicate.
+    if ('launchQueue' in window && window.launchQueue && window.launchQueue.setConsumer){
+      window.launchQueue.setConsumer(function(params){
+        try{
+          var u = params && params.targetURL ? new URL(params.targetURL) : null;
+          if (u) handleZedIncomingURL(u);
+        }catch(e){}
+      });
+    }
+  }catch(e){}
+  try{ handleZedIncomingURL(new URL(window.location.href)); }catch(e){}
+  function handleZedIncomingURL(u){
+    try{
+      var p = u.searchParams;
+      // share_target: someone shared text / a link INTO Zed Scholar (/?share=1&text=...&url=...)
+      if (p.get('share') === '1'){
+        var shared = (p.get('text') || '') + ' ' + (p.get('url') || '');
+        shared = shared.trim();
+        if (shared && window.__zedSetSearch) window.__zedSetSearch(shared);
+        else if (shared){ try{ localStorage.setItem('zed-shared-text', shared); }catch(e){} }
+      }
+      // protocol_handlers: web+zedscholar: / web+ecz: links open as /?paper=... or /?q=...
+      var paper = p.get('paper') || p.get('q');
+      if (paper){
+        try{ localStorage.setItem('zed-open-paper', paper); }catch(e){}
+        if (window.__zedOpenPaper) window.__zedOpenPaper(paper);
+      }
+      // note_taking: OS "New note" opens /?note=new — drop the user into a fresh note / search.
+      if (p.get('note') === 'new'){
+        try{ localStorage.setItem('zed-new-note', '1'); }catch(e){}
+        if (window.__zedNewNote) window.__zedNewNote();
+      }
+    }catch(e){}
+  }
+  try{
+    // window-controls-overlay (display_override): let the page use the title-bar area on Windows.
+    // CSS env() vars give the safe area; we expose them as CSS vars for your header if you use them.
+    if (navigator.windowControlsOverlay){
+      var upd = function(){ try{ var g = navigator.windowControlsOverlay.getTitlebarAreaRect(); document.documentElement.style.setProperty('--zed-titlebar-h', (g && g.height ? g.height : 0) + 'px'); }catch(e){} };
+      try{ navigator.windowControlsOverlay.addEventListener('geometrychange', upd); }catch(e){}
+      upd();
+    }
+  }catch(e){}
 
   // Auto reload when new SW takes control
   let refreshing = false;

@@ -1,0 +1,33 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "ZED SCHOLAR",
+      "weight": "Bolder",
+      "size": "Medium",
+      "color": "Attention"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Continue studying \u2014 ECZ Past Papers",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Form 1-6 & Grade 10-12 \u2022 Marking schemes \u2022 Works offline",
+      "wrap": true,
+      "size": "Small",
+      "isSubtle": true
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.OpenUrl",
+      "title": "Open Zed Scholar",
+      "url": "/?source=widget"
+    }
+  ]
+}

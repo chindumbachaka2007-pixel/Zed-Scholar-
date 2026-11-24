@@ -1,6 +1,6 @@
-var CACHE_NAME = 'zed-scholar-v2';
-var RUNTIME_CACHE = 'zed-scholar-runtime-v2';
-var PDF_CACHE = 'zed-scholar-pdfs-v2';
+var CACHE_NAME = 'zed-scholar-v22';
+var RUNTIME_CACHE = 'zed-scholar-runtime-v22';
+var PDF_CACHE = 'zed-scholar-pdfs-v22';
 var PRECACHE_URLS = [
   '/',
   '/index.html',
@@ -39,6 +39,27 @@ self.addEventListener('activate', function (event) {
 self.addEventListener('message', function (event) {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
+  }
+});
+
+// ===== MERGED PWA ADDITIONS - PWABuilder: periodic background sync =====
+// Registered by the page as 'zed-content-sync' (see v11 HTML).
+// Chrome decides when to run it (needs installed PWA + permission).
+// It only revalidates the tiny shell + manifest - it does NOT download PDFs,
+// so it never eats the user's data. Your PDF / runtime / navigate logic below is untouched.
+self.addEventListener('periodicsync', function (event) {
+  if (event.tag === 'zed-content-sync') {
+    event.waitUntil(
+      caches.open(CACHE_NAME).then(function (cache) {
+        var chain = Promise.resolve();
+        ['/', '/index.html', '/manifest.json'].forEach(function (url) {
+          chain = chain.then(function () {
+            return cache.add(url).catch(function () {});
+          });
+        });
+        return chain;
+      }).catch(function () {})
+    );
   }
 });
 self.addEventListener('fetch', function (event) {
