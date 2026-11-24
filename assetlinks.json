@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "dev.pages.zed_scholar.twa",
+        "sha256_cert_fingerprints": ["56:A0:58:7E:BD:D2:35:AE:72:ED:7B:F5:07:65:B5:10:38:C9:1C:E6:EC:22:D2:DF:46:DF:77:BC:95:2A:B3:1B"]
+      }
+    }]
