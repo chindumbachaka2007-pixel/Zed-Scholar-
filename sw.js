@@ -1,9 +1,9 @@
-/* ZED Scholar - sw.js v28
+/* ZED Scholar - sw.js v1
  * Service Worker for ZED Scholar PWA.
  * Deploy this file NEXT TO ZED-SCHOLAR-fixed.html on Cloudflare Pages,
  * at the site root, so ./sw.js resolves. The HTML registers ./sw.js?v=27.
  *
- * What v27 does for this update:
+ * What v1 does for this update:
  * - Chat relay + notifications: when the page is hidden, the page calls
  *   reg.showNotification(). This worker handles notificationclick so tapping
  *   a notification focuses / opens the app instead of doing nothing.
@@ -17,7 +17,7 @@
  *   for navigations. Supabase / Gemini API calls are NEVER cached.
  */
 
-var CACHE_NAME = 'zed-scholar-v2';
+var CACHE_NAME = 'zed-scholar-v1';
 var CORE_ASSETS = [
   './',
   './index.html',
