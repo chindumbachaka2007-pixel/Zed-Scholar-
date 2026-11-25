@@ -6296,7 +6296,8 @@ window.zedVerifyAdminCode = async function(code){
     }catch(e){}
     return all;
   }
-  // ===== ZED CHATS v3 - LOCAL STORAGE IS THE TRUTH, SUPABASE IS ONLY A RELAY - NO EXPIRY =====
+  // ===== ZED CHATS - SUPABASE IS THE TRUTH, NO AUTO-DELETE =====
+  // Messages are DRAWN FROM SUPABASE every time. Local is only a cache for display. Nothing is auto-deleted on sync/load. Only explicit user Delete removes a row.
   // New rule from user: relay copy must NOT expire. It waits until receiver is online,
   // syncs to receiver phone storage, THEN it is deleted from Supabase.
   // If receiver is offline, message stays in Supabase until they come online and sync.
@@ -6380,6 +6381,7 @@ window.zedVerifyAdminCode = async function(code){
       }catch(e){ resolve(null); }
     });
   }
+  /* deleteRelayById is ONLY for explicit user Delete tap - NEVER called automatically on sync/load. Supabase keeps all messages. */
   function deleteRelayById(id){
     if(!id) return Promise.resolve();
     return fetch(SUPA_URL+'/rest/v1/chat_messages?id=eq.'+encodeURIComponent(id), {method:'DELETE', headers:headers()}).catch(function(){});
@@ -6388,9 +6390,7 @@ window.zedVerifyAdminCode = async function(code){
   async function syncIncomingFromRelay(){
     var me=getMe(); if(!me) return 0;
     try{
-      var res=await fetch(SUPA_URL+'/rest/v1/chat_messages?select=*&receiver_id=eq.'+encodeURIComponent(me.id)+'&order=created_at.asc&limit=100', {headers:headers()});
-      if(!res.ok) return 0;
-      var rows=await res.json(); if(!Array.isArray(rows)) return 0;
+      var rows=[]; try{ var resA=await fetch(SUPA_URL+'/rest/v1/chat_messages?select=*&receiver_id=eq.'+encodeURIComponent(me.id)+'&order=created_at.asc&limit=200', {headers:headers()}); if(resA.ok){ var a1=await resA.json(); if(Array.isArray(a1)) rows=rows.concat(a1); } }catch(e){} try{ var resB=await fetch(SUPA_URL+'/rest/v1/chat_messages?select=*&sender_id=eq.'+encodeURIComponent(me.id)+'&order=created_at.asc&limit=200', {headers:headers()}); if(resB.ok){ var b1=await resB.json(); if(Array.isArray(b1)) rows=rows.concat(b1); } }catch(e){} rows.sort(function(a,b){ return new Date(a.created_at||0)-new Date(b.created_at||0); }); if(!rows.length) return 0;
       var added=0;
       for(var i=0;i<rows.length;i++){
         var r=rows[i]; if(!r || !r.id) continue;
@@ -6399,21 +6399,17 @@ window.zedVerifyAdminCode = async function(code){
         if(d.op==='edit' && d.target_cid){
           var _arr=localMsgsGet(fid);
           for(var _j=0;_j<_arr.length;_j++){ if(String(_arr[_j].id)===String(d.target_cid)){ _arr[_j].text=encodeRelayText(d.text, d.image, {cid:d.target_cid, op:'new'}); _arr[_j].image=(d.image||null); _arr[_j].edited=true; break; } }
-          localMsgsSave(fid, _arr); await deleteRelayById(r.id); added++; continue;
+          localMsgsSave(fid, _arr); /* NO AUTO-DELETE - Supabase is truth, keep row */ added++; continue;
         }
-        if(d.op==='delete' && d.target_cid){
-          var _arr2=localMsgsGet(fid);
-          var _filt=_arr2.filter(function(x){ return String(x.id)!==String(d.target_cid); });
-          if(_filt.length!==_arr2.length) localMsgsSave(fid, _filt);
-          await deleteRelayById(r.id); added++; continue;
+        if(d.op==='delete' && d.target_cid){ var _arr2=localMsgsGet(fid); var _filt=_arr2.filter(function(x){ return String(x.id)!==String(d.target_cid); }); if(_filt.length!==_arr2.length) localMsgsSave(fid, _filt); /* NO AUTO-DELETE */ added++; continue;
         }
         var _cid=d.cid || ('relay-'+r.id);
         // OLD MESSAGES (sent before this update): plain text, no ZED_MSG_JSON.
         // If phone already has same sender + same time + same text, don't duplicate - just delete relay row.
         var _existing=localMsgsGet(fid);         var _already=false;         for(var _k=0;_k<_existing.length;_k++){ var _e=_existing[_k]; if(_e.relay_id && String(_e.relay_id)===String(r.id)){ _already=true; break; } if(_e.id && d.cid && String(_e.id)===String(d.cid)){ _already=true; break; } }
-        if(_already){ await deleteRelayById(r.id); added++; continue; }
+        if(_already){ /* NO AUTO-DELETE - already have it, keep Supabase row */ added++; continue; }
         var msg={id:_cid, relay_id:r.id, sender_id:r.sender_id, receiver_id:r.receiver_id, text:encodeRelayText(d.text, d.image, {cid:_cid, op:'new'}), image:(d.image||null), created_at:r.created_at, read_at:r.read_at||null, relay_delivered:true};
-        var _saved=localMsgsAdd(fid, msg); if(_saved) added++; if(_saved || _already){ try{ await deleteRelayById(r.id); }catch(e){} }
+        var _saved=localMsgsAdd(fid, msg); if(_saved) added++; /* NO AUTO-DELETE - Supabase keeps message, never delete on sync */
       }
       return added;
     }catch(e){ return 0; }
@@ -7112,14 +7108,7 @@ window.zedVerifyAdminCode = async function(code){
     });
     msgsEl.scrollTop=msgsEl.scrollHeight;
   }
-  async function loadMessages(){
-    if(!currentFriend) return;
-    try{ renderLocalMessages(); }catch(e){}
-    try{ var added=await syncIncomingFromRelay(); if(added) renderLocalMessages(); }catch(e){}
-    try{ localMsgsMarkRead(currentFriend.id); renderLocalMessages(); }catch(e){}
-  }
-
-  function startEditChatMessage(m){
+  async function loadMessages(){ if(!currentFriend) return; try{ renderLocalMessages(); }catch(e){} try{ var me2=getMe(); if(me2){ var fid2=String(currentFriend.id); var allRows=[]; try{ var r1=await fetch(SUPA_URL+'/rest/v1/chat_messages?select=*&sender_id=eq.'+encodeURIComponent(me2.id)+'&receiver_id=eq.'+encodeURIComponent(fid2)+'&order=created_at.asc&limit=300', {headers:headers()}); if(r1.ok){ var a1=await r1.json(); if(Array.isArray(a1)) allRows=allRows.concat(a1); } }catch(e){} try{ var r2=await fetch(SUPA_URL+'/rest/v1/chat_messages?select=*&sender_id=eq.'+encodeURIComponent(fid2)+'&receiver_id=eq.'+encodeURIComponent(me2.id)+'&order=created_at.asc&limit=300', {headers:headers()}); if(r2.ok){ var a2=await r2.json(); if(Array.isArray(a2)) allRows=allRows.concat(a2); } }catch(e){} allRows.sort(function(a,b){ return new Date(a.created_at||0)-new Date(b.created_at||0); }); for(var i=0;i<allRows.length;i++){ var rr=allRows[i]; if(!rr||!rr.id) continue; var dd=decodeRelayText(rr.text||''); if(dd.op==='delete'&&dd.target_cid){ var _arrD=localMsgsGet(fid2); var _f=_arrD.filter(function(x){ return String(x.id)!==String(dd.target_cid); }); if(_f.length!==_arrD.length) localMsgsSave(fid2,_f); continue; } if(dd.op==='edit'&&dd.target_cid){ var _arrE=localMsgsGet(fid2); for(var _j=0;_j<_arrE.length;_j++){ if(String(_arrE[_j].id)===String(dd.target_cid)){ _arrE[_j].text=encodeRelayText(dd.text, dd.image, {cid:dd.target_cid, op:'new'}); _arrE[_j].image=(dd.image||null); _arrE[_j].edited=true; break; } } localMsgsSave(fid2,_arrE); continue; } var _cid=dd.cid||('relay-'+rr.id); var _ex=localMsgsGet(fid2); var _has=false; for(var _k=0;_k<_ex.length;_k++){ if(String(_ex[_k].id)===String(_cid)||String(_ex[_k].relay_id)===String(rr.id)){ _has=true; break; } } if(!_has){ localMsgsAdd(fid2, {id:_cid, relay_id:rr.id, sender_id:rr.sender_id, receiver_id:rr.receiver_id, text:encodeRelayText(dd.text, dd.image, {cid:_cid, op:'new'}), image:(dd.image||null), created_at:rr.created_at, read_at:rr.read_at||null}); } } renderLocalMessages(); } }catch(e){} try{ var added=await syncIncomingFromRelay(); if(added) renderLocalMessages(); }catch(e){} try{ localMsgsMarkRead(currentFriend.id); renderLocalMessages(); }catch(e){} }    function startEditChatMessage(m){
     try{
       if(!currentFriend) return;
       var cur=msgTextOf(m);
@@ -16680,209 +16669,9 @@ window._zedV15Filter = 'search';
   html body.zed-light #zed-recovery-modal .zed-recovery-card{ background:#ffffff !important; color:#111111 !important; }
   html body.zed-light #zed-recovery-modal .zed-recovery-card input{ background:#f2f2f2 !important; color:#111111 !important; }
 </style>
-<style id="zed-blackscreen-rescue-style">
-  #zed-blackscreen-rescue{display:none !important;}
-  #zed-blackscreen-rescue.show{display:flex !important; visibility:visible !important;}
-  #zed-blackscreen-rescue{position:fixed !important; inset:0 !important; z-index:10000000 !important; background:#04101F !important; align-items:center !important; justify-content:center !important; padding:24px !important; text-align:center !important;}
-  #zed-blackscreen-rescue .zed-rescue-card{background:#0F2547 !important; border:1px solid rgba(255,255,255,.16) !important; border-radius:20px !important; padding:26px 22px !important; max-width:340px !important; width:100% !important; box-shadow:0 20px 60px rgba(0,0,0,.55) !important;}
-  #zed-blackscreen-rescue .zed-rescue-title{font-size:22px !important; font-weight:900 !important; color:#fff !important; margin:0 0 10px !important; line-height:1.15 !important;}
-  #zed-blackscreen-rescue .zed-rescue-text{font-size:14px !important; line-height:1.6 !important; color:#A9B8D0 !important; margin:0 0 8px !important;}
-  #zed-blackscreen-rescue .zed-rescue-note{font-size:12px !important; line-height:1.5 !important; color:#F5F1E8 !important; background:rgba(232,193,90,.12) !important; border:1px solid rgba(232,193,90,.45) !important; border-radius:12px !important; padding:10px 12px !important; margin:10px 0 16px !important; display:none !important;}
-  #zed-blackscreen-rescue .zed-rescue-note.show{display:block !important;}
-  #zed-blackscreen-rescue .zed-rescue-btn{display:block !important; width:100% !important; height:48px !important; border:none !important; border-radius:999px !important; font-size:15px !important; font-weight:900 !important; cursor:pointer !important; margin:0 0 10px !important;}
-  #zed-blackscreen-rescue .zed-rescue-btn-primary{background:#E8C15A !important; color:#04101F !important;}
-  #zed-blackscreen-rescue .zed-rescue-btn-ghost{background:transparent !important; color:#A9B8D0 !important; border:1px solid rgba(255,255,255,.25) !important;}
-</style>
-<div id="zed-blackscreen-rescue" aria-live="polite"><div class="zed-rescue-card"><div class="zed-rescue-title">App didn\u2019t load</div><p class="zed-rescue-text">The app is stuck on a blank screen. This usually means an old saved copy is being shown, or the page was opened from Downloads instead of your website link.</p><div id="zed-rescue-file-note" class="zed-rescue-note">You opened the downloaded file directly. That blocks the app. Open it from your website link instead: zed-scholar.pages.dev</div><button id="zed-rescue-reload" class="zed-rescue-btn zed-rescue-btn-primary" type="button">Reload app</button><button id="zed-rescue-clear" class="zed-rescue-btn zed-rescue-btn-ghost" type="button">Clear saved copy &amp; reload</button><button id="zed-rescue-continue" class="zed-rescue-btn zed-rescue-btn-ghost" type="button">Continue anyway</button></div></div>
-<script>
-// ZED 24 Nov — WELCOME on first page + LOGIN cleanup.
-// LOGO: glass-theme logo rule is now the ONLY rule that sets the logo border/shadow.
-// The two old gold-ring patches (original splash + fully-rounded) + the old override
-// + cleanRing are DELETED. Do not add another logo border/shadow patch.
-(function(){
-  function setWelcome(){
-    try{
-      var w = document.getElementById('zed-gs-welcome');
-      if(!w) return;
-      var name = '';
-      try{
-        var raw = localStorage.getItem('zed_user');
-        if(raw){ var u = JSON.parse(raw); name = (u && u.name) || ''; }
-      }catch(e){}
-      var next = 'Welcome to';
-      if(name){
-        var first = String(name).trim().split(' ')[0];
-        next = 'Welcome back, ' + first + ' \uD83D\uDC4B';
-      }
-      if(w.textContent !== next) w.textContent = next;
-    }catch(e){}
-  }
-  setWelcome();
-  setTimeout(setWelcome, 500);
-  setTimeout(setWelcome, 1500);
-})();
-// LOGIN cleanup — hide the PASSWORD/OTP toggle and the "Welcome back" heading + subtitle,
-// but SHOW "Phone number" above the phone box on the password login form.
-// Hidden bits stay in the DOM (clipped to 1px, NOT display:none) so other login patches
-// that detect "Welcome back" still work.
-(function(){
-  function isLoginScreen(){
-    try{
-      if(localStorage.getItem('zed_user')) return false;
-      if(document.getElementById('zed-login-btn')) return true;
-      var bt = document.body ? (document.body.innerText || '') : '';
-      return bt.indexOf('Welcome back') !== -1;
-    }catch(e){ return false; }
-  }
-  function hideVisually(el){
-    try{
-      if(!el || el.dataset.zedCleaned) return;
-      el.dataset.zedCleaned = '1';
-      el.setAttribute('aria-hidden', 'true');
-      var s = el.style;
-      s.position = 'absolute';
-      s.width = '1px'; s.height = '1px';
-      s.overflow = 'hidden';
-      s.clip = 'rect(0,0,0,0)';
-      s.clipPath = 'inset(50%)';
-      s.opacity = '0';
-      s.margin = '0'; s.padding = '0';
-      s.border = 'none'; s.background = 'transparent';
-      s.pointerEvents = 'none';
-      var btns = el.querySelectorAll ? el.querySelectorAll('button') : [];
-      for(var i=0;i<btns.length;i++){ try{ btns[i].tabIndex = -1; btns[i].setAttribute('aria-hidden','true'); }catch(e){} }
-    }catch(e){}
-  }
-  function inAuthCard(el){
-    try{
-      var n = el;
-      while(n && n !== document.body){
-        if(n.querySelector && n.querySelector('#zed-login-btn')) return true;
-        n = n.parentNode;
-      }
-    }catch(e){}
-    return false;
-  }
-  function setPhoneLabel(el){
-    try{
-      if(!el) return;
-      if(el.textContent !== 'Phone number') el.textContent = 'Phone number';
-      el.removeAttribute('aria-hidden');
-      try{ delete el.dataset.zedCleaned; }catch(e){}
-      var s = el.style;
-      s.position = ''; s.width = ''; s.height = '';
-      s.overflow = ''; s.clip = ''; s.clipPath = '';
-      s.opacity = ''; s.margin = ''; s.padding = '';
-      s.border = ''; s.background = ''; s.pointerEvents = '';
-      s.display = 'block';
-      s.fontSize = '13px'; s.lineHeight = '1.4';
-      s.textTransform = 'none'; s.letterSpacing = 'normal'; s.fontWeight = '600';
-    }catch(e){}
-  }
-  function cleanLogin(){
-    try{
-      if(!isLoginScreen()) return;
-      var btns = document.querySelectorAll('button');
-      for(var i=0;i<btns.length;i++){
-        var tx = (btns[i].textContent || '').trim();
-        if(tx === 'Password' || tx === 'OTP'){
-          var parent = btns[i].parentNode;
-          if(parent && parent.querySelectorAll('button').length === 2 && inAuthCard(parent)){
-            hideVisually(parent);
-          }
-        }
-      }
-      var heads = document.querySelectorAll('h2');
-      for(var j=0;j<heads.length;j++){
-        if((heads[j].textContent || '').trim() === 'Welcome back'){
-          var wrap = heads[j].parentNode;
-          if(wrap) hideVisually(wrap);
-          var form = wrap ? wrap.parentNode : null;
-          if(form){
-            var labels = form.querySelectorAll('label');
-            for(var k=0;k<labels.length;k++){
-              var lt = (labels[k].textContent || '').trim().toLowerCase().replace(/[\u2014\u2013-]/g,'-').replace(/\s+/g,' ');
-              if(lt === 'phone - 10 digits' || lt === 'phone number') setPhoneLabel(labels[k]);
-            }
-          }
-        }
-      }
-    }catch(e){}
-  }
-  cleanLogin();
-  setTimeout(cleanLogin, 400);
-  setTimeout(cleanLogin, 1200);
-  setInterval(cleanLogin, 600);
-})();
-// BLACK-SCREEN RESCUE: if #root is still empty after a few seconds and no entry screen
-// is showing, the app never painted (stale cached copy, or file opened from Downloads
-// which blocks the app's module script). Never leave the user on a blank screen:
-// show a rescue card with Reload / Clear saved copy / Continue.
-(function(){
-  var shown = false;
-  function rootHasContent(){
-    try{
-      var r = document.getElementById('root');
-      if(!r) return false;
-      return r.children.length > 0 && (r.textContent || '').trim().length > 20;
-    }catch(e){ return false; }
-  }
-  function entryVisible(){
-    try{
-      var gs = document.getElementById('zed-gs-getting-started');
-      if(gs && gs.classList.contains('show')) return true;
-      if(document.getElementById('zed-welcome-popup')) return true;
-    }catch(e){}
-    return false;
-  }
-  function forceClearOverlays(){
-    try{
-      ['zed-loading-logo','zed-splash-screen','zed-loading-splash','zed-gs-circle-loader','zed-quiz-loader'].forEach(function(id){
-        var el = document.getElementById(id);
-        if(el){ try{ el.remove(); }catch(e){ el.style.display = 'none'; } }
-      });
-      document.body.classList.remove('zed-tab-switching');
-      var m = document.querySelector('main');
-      if(m){ m.style.visibility = 'visible'; m.style.opacity = '1'; }
-    }catch(e){}
-  }
-  function showRescue(){
-    if(shown) return;
-    if(rootHasContent() || entryVisible()) return;
-    shown = true;
-    try{
-      if(window.location.protocol === 'file:'){
-        var note = document.getElementById('zed-rescue-file-note');
-        if(note) note.classList.add('show');
-      }
-      var card = document.getElementById('zed-blackscreen-rescue');
-      if(card) card.classList.add('show');
-    }catch(e){}
-  }
-  function hideRescue(){ try{ var c = document.getElementById('zed-blackscreen-rescue'); if(c) c.classList.remove('show'); }catch(e){} }
-  function wire(){
-    try{
-      var reloadBtn = document.getElementById('zed-rescue-reload');
-      if(reloadBtn) reloadBtn.addEventListener('click', function(){ try{ location.reload(); }catch(e){} });
-      var clearBtn = document.getElementById('zed-rescue-clear');
-      if(clearBtn) clearBtn.addEventListener('click', function(){
-        try{
-          if('serviceWorker' in navigator){ navigator.serviceWorker.getRegistrations().then(function(rs){ rs.forEach(function(r){ try{ r.unregister(); }catch(e){} }); }).catch(function(){}); }
-          if(window.caches){ caches.keys().then(function(ks){ ks.forEach(function(k){ try{ caches.delete(k); }catch(e){} }); }).catch(function(){}); }
-        }catch(e){}
-        setTimeout(function(){ try{ location.reload(); }catch(e){} }, 600);
-      });
-      var contBtn = document.getElementById('zed-rescue-continue');
-      if(contBtn) contBtn.addEventListener('click', function(){ forceClearOverlays(); hideRescue(); });
-    }catch(e){}
-  }
-  wire();
-  // Checks only: 5s, 9s. If the app paints late, the 12s check hides the card again.
-  setTimeout(showRescue, 5000);
-  setTimeout(showRescue, 9000);
-  setTimeout(function(){ if(rootHasContent()) hideRescue(); }, 12000);
-})();
-</script>
+<!-- blackscreen rescue REMOVED per user - no blank-screen prompt on first open -->
+<!-- blackscreen rescue div removed -->
+<!-- blackscreen rescue JS removed - no blank-screen prompt -->
 
 <!-- ZED FINAL LOCK — chat + offline colours. This is the ONLY place that locks these. Do not add another fixer for chat/offline. -->
 <style id="zed-chat-offline-final-lock">
@@ -17198,6 +16987,92 @@ window._zedV15Filter = 'search';
       });
     }
   }catch(e){}
+})();
+</script>
+
+
+<!-- ===== ZED CHATS - Facebook-like organization, same dark+gold theme as html ===== -->
+<style id="zed-fb-chats-organize">
+  #zed-chat-list .zed-fb-req-banner{background:#E8C15A!important;color:#04101F!important;border-radius:14px!important;padding:12px 14px!important;margin:10px 12px 6px!important;display:flex!important;align-items:center!important;gap:10px!important;cursor:pointer!important;box-shadow:0 6px 18px rgba(232,193,90,.25)!important}
+  #zed-chat-list .zed-fb-req-banner b{font-size:14px!important}
+  #zed-chat-list .zed-fb-req-banner span{font-size:12px!important;opacity:.8!important}
+  #zed-chat-list .zed-fb-req-banner .zed-fb-req-arrow{margin-left:auto!important;background:#04101F!important;color:#E8C15A!important;border-radius:999px!important;padding:6px 12px!important;font-size:12px!important;font-weight:900!important}
+  .zed-fb-section-head{padding:14px 12px 6px!important;font-size:12px!important;font-weight:900!important;letter-spacing:.12em!important;text-transform:uppercase!important;color:#E8C15A!important}
+  #zed-chat-requests-list .zed-fb-section-head:first-child{padding-top:10px!important}
+</style>
+<script>
+/* Facebook-like organization for Chats: Friend Requests banner at top of Chats + section headers in Requests. Theme = html theme: #04101F + #0F2547 + #E8C15A. Supabase is still the source, no auto-delete. */
+(function(){
+  if(window.__zedFbOrganize) return; window.__zedFbOrganize=true;
+  var SUPA_URL='https://biastmylavwhlsccvpyu.supabase.co';
+  var SUPA_KEY='sb_publishable_74vo5_RlNXb0U0TrNLCdCQ_8zjDwFni';
+  function headers(){ return {apikey:SUPA_KEY, Authorization:'Bearer '+SUPA_KEY}; }
+  function getMe(){ try{ return JSON.parse(localStorage.getItem('zed_user')||'null'); }catch(e){ return null; } }
+  async function getPendingCount(){
+    var me=getMe(); if(!me) return 0;
+    try{
+      var r=await fetch(SUPA_URL+'/rest/v1/friendships?select=user_id,friend_id&friend_id=eq.'+me.id, {headers:headers()});
+      var rows=await r.json(); if(!Array.isArray(rows)) return 0;
+      var r2=await fetch(SUPA_URL+'/rest/v1/friendships?select=user_id,friend_id&user_id=eq.'+me.id, {headers:headers()});
+      var mine=await r2.json(); var out={}; if(Array.isArray(mine)) mine.forEach(function(x){ out[x.friend_id]=true; });
+      var pending=rows.filter(function(x){ return !out[x.user_id]; });
+      // dedupe by user_id
+      var seen={}; var n=0; pending.forEach(function(x){ if(!seen[x.user_id]){ seen[x.user_id]=true; n++; } });
+      return n;
+    }catch(e){ return 0; }
+  }
+  function showBanner(n){
+    try{
+      var list=document.getElementById('zed-chat-list'); if(!list) return;
+      var old=document.getElementById('zed-fb-req-banner'); if(old) old.remove();
+      if(!n) return;
+      // Only show on Chats tab (when friends/requests lists are hidden)
+      var fl=document.getElementById('zed-chat-friends-list'); var rl=document.getElementById('zed-chat-requests-list');
+      if(fl && fl.style.display!=='none') return;
+      if(rl && rl.style.display!=='none') return;
+      var b=document.createElement('div'); b.id='zed-fb-req-banner'; b.className='zed-fb-req-banner';
+      b.innerHTML='<div style="width:38px;height:38px;border-radius:999px;background:#04101F;color:#E8C15A;display:flex;align-items:center;justify-content:center;font-size:18px">👥</div><div style="flex:1;min-width:0"><b>Friend Requests</b><br/><span>'+n+' new request'+(n>1?'s':'')+' • Tap to view</span></div><div class="zed-fb-req-arrow">View ›</div>';
+      b.addEventListener('click', function(){ try{ var tab=document.getElementById('zed-tab-requests'); if(tab) tab.click(); }catch(e){} });
+      list.insertBefore(b, list.firstChild);
+    }catch(e){}
+  }
+  function addSectionHeaders(){
+    try{
+      var rl=document.getElementById('zed-chat-requests-list'); if(!rl) return;
+      // Add headers if Requests list has cards but no headers yet - observer will handle after render
+      if(rl.querySelector('.zed-fb-section-head')) return;
+      // We do not rewrite Requests cards, just add a top header for clarity like Facebook
+      if(rl.children.length>0){
+        var h=document.createElement('div'); h.className='zed-fb-section-head'; h.textContent='Friend Requests • Incoming & Sent';
+        rl.insertBefore(h, rl.firstChild);
+      }
+    }catch(e){}
+  }
+  async function refresh(){
+    var n=await getPendingCount();
+    showBanner(n);
+    // Update Requests tab badge is already handled by original code, but ensure it shows
+    try{ var badge=document.getElementById('zed-tab-requests-count'); if(badge && n>0){ badge.textContent=n; badge.style.display='inline-block'; } }catch(e){}
+    addSectionHeaders();
+  }
+  // Refresh when Chats panel opens, when tabs are clicked, and every 15s while open
+  document.addEventListener('click', function(e){
+    try{
+      var t=e.target; if(!t) return;
+      if(t.closest && (t.closest('#zed-chat-btn') || t.closest('#zed-tab-chats') || t.closest('#zed-tab-requests') || t.closest('#zed-tab-friends'))){
+        setTimeout(refresh, 400); setTimeout(refresh, 1200);
+      }
+    }catch(e){}
+  });
+  setInterval(function(){ try{ var panel=document.getElementById('zed-chat-panel'); if(panel && panel.classList.contains('open')) refresh(); }catch(e){} }, 15000);
+  // Observe Requests list for new cards and add header
+  setTimeout(function(){
+    try{
+      var rl=document.getElementById('zed-chat-requests-list'); if(!rl || !window.MutationObserver) return;
+      var obs=new MutationObserver(function(){ addSectionHeaders(); });
+      obs.observe(rl, {childList:true});
+    }catch(e){}
+  }, 1500);
 })();
 </script>
 
