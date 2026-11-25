@@ -3976,7 +3976,7 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
 <script>
 // === ZED SCHOLAR V26 PWA AUTO-UPDATE ===
 if ('serviceWorker' in navigator && (location.protocol==='https:' || location.protocol==='http:')) {
-  navigator.serviceWorker.register('./sw.js?v=30').then(reg => {
+  navigator.serviceWorker.register('./sw.js?v=32').then(reg => {
     // Check for update immediately and every hour
     reg.update();
     setInterval(() => reg.update(), 60 * 60 * 1000);
@@ -7045,18 +7045,8 @@ window.zedVerifyAdminCode = async function(code){
   function _msgsKey(list){ try{ return (list||[]).map(function(m){ return (m.id||'')+'|'+(m.text||'')+'|'+(m.read_at||''); }).join(';;'); }catch(e){ return ''; } }
   function _tickHtml(m, isMe){ if(!isMe) return ''; if(m._failed) return '<div class="zed-chat-tick" style="text-align:right;color:#FF6B6B;font-weight:900">⚠️ Not delivered — Tap to retry</div>'; if(m._sending) return '<div class="zed-chat-tick" style="text-align:right;color:#A9B8D0">⏳ Sending...</div>'; if(m.read_at) return '<div class="zed-chat-tick read" style="text-align:right">✓✓ Read</div>'; if(m.relay_id || m._delivered) return '<div class="zed-chat-tick" style="text-align:right">✓ Sent</div>'; return '<div class="zed-chat-tick" style="text-align:right;color:#A9B8D0">⏳ Sending...</div>'; }
   function showChatRlsBanner(status, errText){
-    try{
-      if(status!==401 && status!==403) return;
-      if(document.getElementById('zed-chat-rls-banner')) return;
-      var panel=document.getElementById('zed-chat-panel'); if(!panel) return;
-      var b=document.createElement('div'); b.id='zed-chat-rls-banner';
-      b.style.cssText='background:#FF3B30;color:#fff;padding:12px 14px;font-size:13px;line-height:1.5;position:sticky;top:0;z-index:10';
-      var sql="ALTER TABLE chat_messages DISABLE ROW LEVEL SECURITY;\n-- OR if you want RLS on, run this instead:\nCREATE POLICY \"chat_all\" ON chat_messages FOR ALL USING (true) WITH CHECK (true);";
-      b.innerHTML='<b>⚠️ Messages blocked by Supabase RLS ('+status+')</b><br/>Your message did NOT reach Supabase, so the other phone never gets it. Fix in 1 minute:<br/>Supabase → SQL Editor → paste → Run:<br/><div style="background:#04101F;color:#E8C15A;padding:8px;border-radius:8px;margin:8px 0;font-family:monospace;font-size:11px;white-space:pre-wrap">'+sql.replace(/</g,'&lt;')+'</div><button id="zed-rls-copy" style="background:#E8C15A;color:#04101F;border:none;border-radius:999px;padding:8px 14px;font-weight:900;cursor:pointer">Copy SQL</button> <button id="zed-rls-close" style="background:transparent;color:#fff;border:1px solid #fff;border-radius:999px;padding:8px 14px;font-weight:900;cursor:pointer">Close</button><div style="font-size:11px;opacity:.9;margin-top:6px">Error: '+String(errText||'').slice(0,200)+'</div>';
-      panel.insertBefore(b, panel.firstChild);
-      var cb=document.getElementById('zed-rls-copy'); if(cb) cb.addEventListener('click', function(){ try{ if(navigator.clipboard) navigator.clipboard.writeText(sql); this.textContent='Copied ✓'; }catch(e){} });
-      var cl=document.getElementById('zed-rls-close'); if(cl) cl.addEventListener('click', function(){ b.remove(); });
-    }catch(e){}
+    // RED BANNER REMOVED 25 Nov - never show red RLS banner anywhere. Bubble shows Not delivered.
+    try{ console.log('[ZED CHAT] RLS/banner suppressed', status, errText); }catch(e){}
   }
   var _longPressTimer=null;
   function showChatActionSheet(m, isMe){
@@ -7178,7 +7168,7 @@ window.zedVerifyAdminCode = async function(code){
     _lastMsgsKey=''; renderLocalMessages();
     try{
       var payload={sender_id:me.id, receiver_id:currentFriend.id, text:encoded, created_at:now};
-      if(imageData) payload.image=imageData;
+      // Do NOT send separate image column - encoded text already contains the photo. Sending image column breaks if table has no image column.
       var r=null;
       try{
         var _ctrl=new AbortController(); var _to=setTimeout(function(){ try{_ctrl.abort();}catch(e){} }, 12000);
@@ -7809,6 +7799,34 @@ body.zed-on-auth #zed-notif-bell{ display:none !important; }
     try{ if(navigator.vibrate) navigator.vibrate(200); }catch(e){}
   }
   function showNotif(title, body, tag, onClick){
+    // SAFETY NET 26 Nov: strip ZED_MSG_JSON from ANY notification body, even if caller forgot to decode
+    try{
+      var _b = String(body||'');
+      if(_b.indexOf('ZED_MSG_JSON:')!==-1){
+        var _s = _b.indexOf('ZED_MSG_JSON:');
+        var _e = _b.indexOf('}', _s);
+        // Find JSON object after ZED_MSG_JSON: - it ends with } before " - Tap to reply" or end
+        try{
+          var _jsonStart = _s + 13;
+          var _jsonEnd = _b.indexOf('"}', _jsonStart);
+          // Simpler: extract {...} by balancing braces
+          var _depth=0; var _end=-1;
+          for(var _i=_jsonStart; _i<_b.length; _i++){ var _c=_b[_i]; if(_c==='{') _depth++; if(_c==='}'){ _depth--; if(_depth===0){ _end=_i; break; } } }
+          if(_end!==-1){
+            var _o2 = JSON.parse(_b.slice(_jsonStart, _end+1));
+            var _clean = _o2.t||'';
+            if(_o2.op==='delete') return; // don't notify for deletes
+            if(_o2.img && !_clean) _clean='Photo';
+            else if(_o2.img && _clean) _clean='Photo - '+_clean;
+            body = _b.slice(0,_s) + _clean + _b.slice(_end+1);
+            // Remove leftover " - Tap to reply" duplication if it was inside JSON slice
+            body = body.replace('ZED_MSG_JSON:', '');
+          }
+        }catch(_e2){
+          body = _b.replace(/ZED_MSG_JSON:\{[^}]*\}/g, '').replace(/ZED_MSG_JSON:/g, '');
+        }
+      }
+    }catch(e){}
     showToast(title, body, onClick);
     try{
       if('Notification' in window && Notification.permission==='granted'){
@@ -7846,7 +7864,20 @@ body.zed-on-auth #zed-notif-bell{ display:none !important; }
       var latest=newRows[0]; setLast('zed_notif_last_chat_id', latest.id);
       var senderName='Someone';
       try{ var pr=await fetch(SUPA_URL+'/rest/v1/profiles?select=name&id=eq.'+latest.sender_id, {headers:headers()}); var prRows=await pr.json(); if(prRows && prRows[0]) senderName=prRows[0].name||'Someone'; }catch(e){}
-      var preview=(latest.text||'sent you a message').slice(0,80);
+      // FIX 26 Nov: decode ZED_MSG_JSON - never show raw relay code in notification. "Hru" not ZED_MSG_JSON:{"t":"Hru"...}
+      var _rawNotif = String(latest.text||'');
+      var _notifOp = 'new'; var _notifText = _rawNotif;
+      try{
+        if(_rawNotif.indexOf('ZED_MSG_JSON:')===0){
+          var _o = JSON.parse(_rawNotif.slice(13));
+          _notifOp = (_o.op||'new');
+          if(_notifOp==='delete'){ setLast('zed_notif_last_chat_id', latest.id); return; }
+          if(_o.img && !_o.t) _notifText = 'Photo';
+          else if(_o.img && _o.t) _notifText = 'Photo - ' + _o.t;
+          else _notifText = (_o.t||'');
+        }
+      }catch(e){ _notifText = _rawNotif; }
+      var preview=(_notifText||'sent you a message').slice(0,80);
       showNotif('💬 New message from '+senderName, preview+' - Tap to reply!', 'zed-chat-'+latest.id, openChats);
     }catch(e){}
   }
@@ -17341,19 +17372,9 @@ window._zedV15Filter = 'search';
 (function(){
   if(window.__zedChatDiag) return; window.__zedChatDiag=true;
   function showDiag(msg, isErr){
-    try{
-      var old=document.getElementById('zed-chat-diag-banner');
-      if(old) old.remove();
-      var b=document.createElement('div');
-      b.id='zed-chat-diag-banner';
-      b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:'+(isErr?'#FF3B30':'#E8C15A')+';color:'+(isErr?'#fff':'#000')+';padding:10px 12px;font-size:12px;font-weight:700;line-height:1.4;text-align:left;white-space:pre-wrap;word-break:break-word;box-shadow:0 4px 20px rgba(0,0,0,.5)';
-      b.textContent=msg;
-      // Tap to dismiss
-      b.addEventListener('click', function(){ try{b.remove()}catch(e){} });
-      document.body.appendChild(b);
-      // Auto-hide after 15s for success, keep error until tapped
-      if(!isErr) setTimeout(function(){ try{b.remove()}catch(e){} }, 8000);
-    }catch(e){}
+    // RED BANNER REMOVED 25 Nov - user said red message must not show anywhere.
+    // Never create a red banner. Log silently for debugging only.
+    try{ console.log('[ZED CHAT] (banner suppressed)', msg); }catch(e){}
   }
   window.zedShowChatDiag=showDiag;
   // Patch fetch to capture chat_messages POST/GET failures and show them
@@ -17366,7 +17387,7 @@ window._zedV15Filter = 'search';
       try{
         var u2=String(url||'');
         if(u2.indexOf('chat_messages')!==-1){
-          showDiag('CHAT NETWORK ERROR\nURL: '+u2+'\nError: '+(e && e.message || e)+'\n\nThis is internet / Supabase down, not RLS.\nTap to dismiss.', true);
+          /* NO RED BANNER - network error logged silently */ try{ console.log('[ZED CHAT] network error', u2, e); }catch(_e){}
         }
       }catch(_e){}
       throw e;
@@ -17378,7 +17399,7 @@ window._zedV15Filter = 'search';
           // Clone to read body without breaking original
           var txt=''; try{ var cl=res.clone(); txt=await cl.text(); }catch(e){ txt='(could not read error body)'; }
           var method=(opts && opts.method) || 'GET';
-          showDiag('CHAT FAILED - '+method+' -> '+res.status+'\nURL: '+u.slice(0,120)+'\nSupabase says: '+txt.slice(0,600)+'\n\nTap this banner to dismiss.\nIf 401/403 = RLS / key blocked.\nIf 400 = column / uuid wrong.\nIf 404 = table not found.', true);
+          // NO RED BANNER - just log silently. Bubble will show Not delivered - Tap to retry.
           // Also store for tapping Not delivered
           try{ localStorage.setItem('zed_last_chat_error', JSON.stringify({status:res.status, body:txt.slice(0,800), method:method, at:new Date().toISOString()})); }catch(e){}
         } else {
@@ -17396,7 +17417,8 @@ window._zedV15Filter = 'search';
       if(el && (el.textContent||'').indexOf('Not delivered')!==-1){
         var last=null; try{ last=JSON.parse(localStorage.getItem('zed_last_chat_error')||'null'); }catch(_e){}
         if(last){
-          setTimeout(function(){ showDiag('LAST CHAT ERROR\nStatus: '+last.status+'\n'+last.body+'\n\nTap to dismiss, then tap Not delivered again to retry.', true); }, 300);
+          // NO RED BANNER - just log silently, tapping bubble already retries
+          try{ console.log('[ZED CHAT] last error', last); }catch(e){}
         }
       }
     }catch(e){}
@@ -17413,6 +17435,28 @@ window._zedV15Filter = 'search';
   try{ localStorage.removeItem('zed_auth_session_v1'); }catch(e){}
   try{ sessionStorage.removeItem('zed_auth_session'); }catch(e){}
   console.log('[ZED] ANON ONLY - Auth disabled, using anon + publishable key');
+})();
+</script>
+
+
+<style id="zed-no-red-banner">
+/* NO RED BANNER ANYWHERE - 25 Nov fix */
+#zed-chat-diag-banner, #zed-chat-rls-banner, #zed-diag-banner, [id*="diag-banner"], [id*="rls-banner"]{ display:none !important; visibility:hidden !important; opacity:0 !important; pointer-events:none !important; height:0 !important; overflow:hidden !important; }
+</style>
+<script>
+(function(){
+  // Remove any red banner that somehow gets created, immediately
+  try{
+    var _obs = new MutationObserver(function(){
+      try{
+        var b = document.getElementById('zed-chat-diag-banner') || document.getElementById('zed-chat-rls-banner');
+        if(b) b.remove();
+      }catch(e){}
+    });
+    if(document.body) _obs.observe(document.body, {childList:true, subtree:true});
+  }catch(e){}
+  // Also clear any old diag banner on load
+  try{ var _old=document.getElementById('zed-chat-diag-banner'); if(_old) _old.remove(); }catch(e){}
 })();
 </script>
 

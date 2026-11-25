@@ -1,5 +1,5 @@
 
-/* ZED Scholar - FCM for closed-app pushes (v30) */
+/* ZED Scholar - FCM for closed-app pushes (v32) */
 try {
   importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
   importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
@@ -16,8 +16,19 @@ try {
     var zedMessagingSW = firebase.messaging();
     zedMessagingSW.onBackgroundMessage(function(payload) {
       var title = (payload.notification && payload.notification.title) || (payload.data && payload.data.title) || 'ZED Scholar';
+      var _rawBody = (payload.notification && payload.notification.body) || (payload.data && payload.data.body) || 'New update';
+      // FIX 26 Nov: decode ZED_MSG_JSON so closed-app push shows "Hru", not raw code
+      try{
+        if(String(_rawBody).indexOf('ZED_MSG_JSON:')!==-1){
+          var _s = String(_rawBody).indexOf('ZED_MSG_JSON:');
+          var _j = String(_rawBody).slice(_s+13);
+          var _depth=0; var _end=-1;
+          for(var _i=0;_i<_j.length;_i++){ var _c=_j[_i]; if(_c==='{') _depth++; if(_c==='}'){ _depth--; if(_depth===0){ _end=_i; break; } } }
+          if(_end!==-1){ var _o=JSON.parse(_j.slice(0,_end+1)); if(_o.op==='delete') return Promise.resolve(); var _clean=_o.t||''; if(_o.img && !_clean) _clean='Photo'; else if(_o.img && _clean) _clean='Photo - '+_clean; _rawBody = String(_rawBody).slice(0,_s) + _clean + String(_rawBody).slice(_s+13+_end+1); }
+        }
+      }catch(e){}
       var opts = {
-        body: (payload.notification && payload.notification.body) || (payload.data && payload.data.body) || 'New update',
+        body: _rawBody,
         icon: '/icon-192.png',
         badge: '/icon-192.png',
         data: payload.data || {}
@@ -27,7 +38,7 @@ try {
   }
 } catch (e) { /* FCM not available - normal push handler below still works */ }
 
-/* ZED Scholar - sw.js v30
+/* ZED Scholar - sw.js v32
  * Service Worker for ZED Scholar PWA.
  * Deploy this file NEXT TO ZED-SCHOLAR-fixed.html on Cloudflare Pages,
  * at the site root, so ./sw.js resolves. The HTML registers ./sw.js?v=28.
@@ -46,7 +57,7 @@ try {
  *   for navigations. Supabase / Gemini API calls are NEVER cached.
  */
 
-var CACHE_NAME = 'zed-scholar-v27';
+var CACHE_NAME = 'zed-scholar-v32';
 var CORE_ASSETS = [
   './',
   './index.html',
