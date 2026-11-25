@@ -6303,18 +6303,20 @@ window.zedVerifyAdminCode = async function(code){
   // Old bug: cleanup tried bulk DELETE and only ran when Chats opened, so rows stayed for days.
   // New: receiver deletes by exact id as soon as it saves locally. Sender never deletes undelivered rows.
   function oneHourAgoISO(){ return new Date(0).toISOString(); }
+  function getLocalMsgsKey(){ try{ var _me=getMe(); return 'zed_msgs_local_v2_'+(_me&&_me.id?_me.id:'anon'); }catch(e){ return 'zed_msgs_local_v2_anon'; } }
+  function getOutboxKey(){ try{ var _me2=getMe(); return 'zed_chat_outbox_v2_'+(_me2&&_me2.id?_me2.id:'anon'); }catch(e){ return 'zed_chat_outbox_v2_anon'; } }
   var LOCAL_MSGS_KEY='zed_msgs_local_v2';
   var OUTBOX_KEY='zed_chat_outbox_v2';
   function _localGet(k, fb){ try{ var v=JSON.parse(localStorage.getItem(k)||'null'); return v==null?fb:v; }catch(e){ return fb; } }
   function _localSet(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ return false; } }
-  function localMsgsGetAll(){ var a=_localGet(LOCAL_MSGS_KEY, {}); return (a && typeof a==='object')?a:{}; }
+  function localMsgsGetAll(){ try{ var k=getLocalMsgsKey(); var a=_localGet(k, null); if(a && typeof a==='object') return a; var old=_localGet('zed_msgs_local_v2', null); if(old && typeof old==='object' && Object.keys(old).length){ var _me=getMe(); var _filtered={}; var _has=false; for(var _fid in old){ var _arr=old[_fid]||[]; var _keep=_arr.filter(function(m){ return _me && (String(m.sender_id)===String(_me.id) || String(m.receiver_id)===String(_me.id)); }); if(_keep.length){ _filtered[_fid]=_keep; _has=true; } } if(_has){ _localSet(k, _filtered); return _filtered; } } return {}; }catch(e){ return {}; } }
   function localMsgsGet(fid){ var a=localMsgsGetAll(); return Array.isArray(a[String(fid)])?a[String(fid)]:[]; }
   function localMsgsSave(fid, list){
     try{
       var all=localMsgsGetAll(); var arr=(list||[]).slice(-300);
-      if(!_localSet(LOCAL_MSGS_KEY, (function(){ all[String(fid)]=arr; return all; })())){
+      if(!_localSet(getLocalMsgsKey(), (function(){ all[String(fid)]=arr; return all; })())){
         var slim=arr.map(function(m){ var c={}; for(var k in m){ if(k!=='image') c[k]=m[k]; } if(m.image && arr.indexOf(m)>=arr.length-20) c.image=m.image; return c; });
-        all[String(fid)]=slim; _localSet(LOCAL_MSGS_KEY, all);
+        all[String(fid)]=slim; _localSet(getLocalMsgsKey(), all);
       }
     }catch(e){}
   }
@@ -6386,7 +6388,8 @@ window.zedVerifyAdminCode = async function(code){
   async function syncIncomingFromRelay(){
     var me=getMe(); if(!me) return 0;
     try{
-      var res=await fetch(SUPA_URL+'/rest/v1/chat_messages?select=*&receiver_id=eq.'+me.id+'&order=created_at.asc&limit=100', {headers:headers()});
+      var res=await fetch(SUPA_URL+'/rest/v1/chat_messages?select=*&receiver_id=eq.'+encodeURIComponent(me.id)+'&order=created_at.asc&limit=100', {headers:headers()});
+      if(!res.ok) return 0;
       var rows=await res.json(); if(!Array.isArray(rows)) return 0;
       var added=0;
       for(var i=0;i<rows.length;i++){
@@ -6407,26 +6410,20 @@ window.zedVerifyAdminCode = async function(code){
         var _cid=d.cid || ('relay-'+r.id);
         // OLD MESSAGES (sent before this update): plain text, no ZED_MSG_JSON.
         // If phone already has same sender + same time + same text, don't duplicate - just delete relay row.
-        var _existing=localMsgsGet(fid);
-        var _already=false;
-        for(var _k=0;_k<_existing.length;_k++){ var _e=_existing[_k]; if(String(_e.sender_id)===String(r.sender_id) && String(_e.created_at||'')===String(r.created_at||'') && msgTextOf(_e)===d.text){ _already=true; break; } if(_e.relay_id && String(_e.relay_id)===String(r.id)){ _already=true; break; } }
+        var _existing=localMsgsGet(fid);         var _already=false;         for(var _k=0;_k<_existing.length;_k++){ var _e=_existing[_k]; if(_e.relay_id && String(_e.relay_id)===String(r.id)){ _already=true; break; } if(_e.id && d.cid && String(_e.id)===String(d.cid)){ _already=true; break; } }
         if(_already){ await deleteRelayById(r.id); added++; continue; }
         var msg={id:_cid, relay_id:r.id, sender_id:r.sender_id, receiver_id:r.receiver_id, text:encodeRelayText(d.text, d.image, {cid:_cid, op:'new'}), image:(d.image||null), created_at:r.created_at, read_at:r.read_at||null, relay_delivered:true};
-        if(localMsgsAdd(fid, msg)) added++;
-        await deleteRelayById(r.id);
+        var _saved=localMsgsAdd(fid, msg); if(_saved) added++; if(_saved || _already){ try{ await deleteRelayById(r.id); }catch(e){} }
       }
       return added;
     }catch(e){ return 0; }
   }
-  async function cleanupRelay(){
-    try{ await syncIncomingFromRelay(); }catch(e){}
-    try{ await flushChatOutbox(); }catch(e){}
-  }
+  async function cleanupRelay(){ var _added=0; try{ _added=await syncIncomingFromRelay(); }catch(e){} try{ await flushChatOutbox(); }catch(e){} if(_added>0){ try{ if(currentFriend) renderLocalMessages(); }catch(e){} try{ if(panel && panel.classList.contains('open') && !currentFriend) loadFriends(); }catch(e){} try{ updateChatBadge(); }catch(e){} } }
   async function cleanupMyExpiredRelay(){ return; }
   async function flushChatOutbox(){
     try{
       var me=getMe(); if(!me) return;
-      var ob=_localGet(OUTBOX_KEY, []);
+      var ob=_localGet(getOutboxKey(), []);
       if(!ob || !ob.length) return;
       var keep=[];
       for(var i=0;i<ob.length;i++){
@@ -6436,7 +6433,7 @@ window.zedVerifyAdminCode = async function(code){
           if(!r.ok) keep.push(item);
         }catch(e){ keep.push(item); }
       }
-      _localSet(OUTBOX_KEY, keep.slice(-100));
+      _localSet(getOutboxKey(), keep.slice(-100));
     }catch(e){}
   }
   async function resendPendingRelay(fid){ try{ await flushChatOutbox(); }catch(e){} }
@@ -6445,7 +6442,7 @@ window.zedVerifyAdminCode = async function(code){
     if(_oldMc && !_localGet('zed_msgs_local_v2_migrated', null)){
       var _all=localMsgsGetAll();
       for(var _k in _oldMc){ var _list=_oldMc[_k]||[]; var _cur=_all[String(_k)]||[]; var _seen={}; _cur.forEach(function(x){ if(x.id) _seen[String(x.id)]=1; }); _list.forEach(function(x){ if(x && x.id && !_seen[String(x.id)]){ _cur.push({id:x.id, sender_id:x.sender_id, receiver_id:x.receiver_id, text:x.text, created_at:x.created_at, read_at:x.read_at||null}); } }); _all[String(_k)]=_cur.slice(-300); }
-      _localSet(LOCAL_MSGS_KEY, _all); _localSet('zed_msgs_local_v2_migrated', true);
+      _localSet(getLocalMsgsKey(), _all); _localSet('zed_msgs_local_v2_migrated', true);
     }
   }catch(e){}
 
@@ -6905,6 +6902,7 @@ window.zedVerifyAdminCode = async function(code){
     if(_loadFriendsBusy) return; // FIX v5: a load is already running - don't start a second one that will flicker
     _loadFriendsBusy=true;
     var mySeq=++_loadFriendsSeq; // only newest load may render
+    try{ await syncIncomingFromRelay(); }catch(e){} // FIX RECEIVE: sync relay BEFORE building list
     try{ zedRenderCachedFriends(); }catch(e){} // OFFLINE: show saved friends instantly, don't wait for Supabase
     try{
       // Fetch ALL friendships - robust 2-call version
@@ -7171,9 +7169,9 @@ window.zedVerifyAdminCode = async function(code){
     try{
       var r=await fetch(SUPA_URL+'/rest/v1/chat_messages', {method:'POST', headers:Object.assign({}, headers(), {Prefer:'return=representation'}), body: JSON.stringify({sender_id:me.id, receiver_id:currentFriend.id, text:encoded})});
       if(r.ok){ try{ var jr=await r.json(); if(jr && jr[0] && jr[0].id){ var arr2=localMsgsGet(currentFriend.id); for(var i=0;i<arr2.length;i++){ if(String(arr2[i].id)===cid){ arr2[i].relay_id=jr[0].id; break; } } localMsgsSave(currentFriend.id, arr2); } }catch(e){} }
-      else { try{ var _ob=_localGet(OUTBOX_KEY, []); _ob.push({cid:cid, receiver_id:currentFriend.id, text:encoded, created_at:now}); _localSet(OUTBOX_KEY, _ob.slice(-100)); }catch(_e){} }
+      else { try{ var _ob=_localGet(getOutboxKey(), []); _ob.push({cid:cid, receiver_id:currentFriend.id, text:encoded, created_at:now}); _localSet(getOutboxKey(), _ob.slice(-100)); }catch(_e){} }
     }catch(e){
-      try{ var _ob2=_localGet(OUTBOX_KEY, []); _ob2.push({cid:cid, receiver_id:currentFriend.id, text:encoded, created_at:now}); _localSet(OUTBOX_KEY, _ob2.slice(-100)); }catch(_e){}
+      try{ var _ob2=_localGet(getOutboxKey(), []); _ob2.push({cid:cid, receiver_id:currentFriend.id, text:encoded, created_at:now}); _localSet(getOutboxKey(), _ob2.slice(-100)); }catch(_e){}
     }
   }
   async function sendMessage(){
