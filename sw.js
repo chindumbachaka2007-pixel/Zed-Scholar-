@@ -17,7 +17,7 @@
  *   for navigations. Supabase / Gemini API calls are NEVER cached.
  */
 
-var CACHE_NAME = 'zed-scholar-v28';
+var CACHE_NAME = 'zed-scholar-v2';
 var CORE_ASSETS = [
   './',
   './index.html',
