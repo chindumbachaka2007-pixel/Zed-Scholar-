@@ -2098,10 +2098,12 @@ body.zed-light .zed-cat-icon{ background:#fff !important; }
 </style>
 
 <style>
-/* ZED - Settings gear REMOVED - never show anywhere */
-#zed-settings-btn, button#zed-settings-btn, .zed-settings-gear, [id*="zed-settings-btn"]{
+/* ZED - Old settings button hidden, NEW gear button (zed-settings-gear-btn) MUST show - fixed 25 Nov */
+#zed-settings-btn, button#zed-settings-btn{
   display:none !important; visibility:hidden !important; opacity:0 !important; pointer-events:none !important; width:0 !important; height:0 !important; position:absolute !important; left:-9999px !important; top:-9999px !important;
 }
+#zed-settings-gear-btn{ display:flex !important; visibility:visible !important; opacity:1 !important; pointer-events:auto !important; }
+header #zed-settings-gear-btn{ display:flex !important; visibility:visible !important; opacity:1 !important; }
 </style>
 
 <style>
@@ -3974,7 +3976,7 @@ if(h)throw Error(h.message);F(vidFile?"Video uploaded from phone ✓":"Video add
 <script>
 // === ZED SCHOLAR V26 PWA AUTO-UPDATE ===
 if ('serviceWorker' in navigator && (location.protocol==='https:' || location.protocol==='http:')) {
-  navigator.serviceWorker.register('./sw.js?v=28').then(reg => {
+  navigator.serviceWorker.register('./sw.js?v=30').then(reg => {
     // Check for update immediately and every hour
     reg.update();
     setInterval(() => reg.update(), 60 * 60 * 1000);
@@ -7264,6 +7266,8 @@ window.zedVerifyAdminCode = async function(code){
 (function(){
   function isOnAuthPage(){
     try{
+      // FIX GEAR: logged in + header = inside app, NOT auth. Hidden login buttons in DOM must not hide header/gear.
+      try{ var _u=localStorage.getItem('zed_user'); var _h=document.querySelector('header'); if(_u && _h && _h.offsetParent!==null) return false; }catch(e){}
       var bodyText = (document.body ? (document.body.innerText||'') : '').toLowerCase();
       var hasLoginBtn = Array.from(document.querySelectorAll('button')).some(function(b){
         var t=(b.textContent||'').trim().toLowerCase();
@@ -15683,6 +15687,8 @@ window._zedV15Filter = 'search';
   function hasUser(){ try{ return !!localStorage.getItem('zed_user'); }catch(e){ return false; } }
   function isAuthPage(){
     try{
+      // FIX GEAR: if user is logged in AND header exists, we are INSIDE app, not auth - even if hidden login buttons exist in DOM
+      try{ if(localStorage.getItem('zed_user') && document.querySelector('header')) return false; }catch(e){}
       var t = document.body ? (document.body.innerText || '') : '';
       if(t.indexOf('Welcome back') !== -1) return true;
       if(t.indexOf('Log in to access past papers') !== -1) return true;
@@ -17161,15 +17167,11 @@ window._zedV15Filter = 'search';
           else { opts.headers['Authorization']='Bearer '+SUPA_ANON; opts.headers['apikey']=SUPA_ANON; }
           return _origFetch.apply(this, arguments);
         }
-        var sess=getSession();
-        // FIX DELIVERY: if Auth token expired, DO NOT send it - expired token = 401 = receiver gets nothing. Fall back to anon.
-        if(sess && sess.expires_at && Date.now()>sess.expires_at-30000){ try{ saveSession(null); }catch(e){} sess=null; }
-        if(sess && sess.access_token){
-          opts=opts||{}; opts.headers=opts.headers||{};
-          // Headers may be object or Headers instance - handle object case (app uses plain objects)
-          if(opts.headers instanceof Headers){ opts.headers.set('Authorization','Bearer '+sess.access_token); }
-          else { opts.headers['Authorization']='Bearer '+sess.access_token; opts.headers['apikey']=SUPA_ANON; }
-        }
+        // ANON ONLY - Auth disabled by user. NEVER use Auth token, always anon + publishable. RLS is OFF so anon works.
+        try{ saveSession(null); }catch(e){}
+        opts=opts||{}; opts.headers=opts.headers||{};
+        if(opts.headers instanceof Headers){ opts.headers.set('Authorization','Bearer '+SUPA_ANON); opts.headers.set('apikey',SUPA_ANON); }
+        else { opts.headers['Authorization']='Bearer '+SUPA_ANON; opts.headers['apikey']=SUPA_ANON; }
       }
     }catch(e){}
     return _origFetch.apply(this, arguments);
@@ -17202,6 +17204,8 @@ window._zedV15Filter = 'search';
     }catch(e){}
   }
   async function ensureAuth(phone, password){
+    // ANON ONLY - Auth disabled. Do not create Auth users, do not sign in to Auth. Profiles table is the login.
+    return null;
     if(!phone || !password || password.length<6) return null;
     var email=phoneToEmail(phone);
     try{
@@ -17328,6 +17332,87 @@ window._zedV15Filter = 'search';
   // We already have an interceptor, so just add logging for chat_messages failures
   window.addEventListener('error', function(e){});
   console.log('[ZED DELIVERY] fix active - expired Auth token will fall back to anon, chat will retry every 3s when open');
+})();
+</script>
+
+
+<!-- ===== ZED CHAT DIAGNOSTIC - Show REAL error on screen, not just "Not delivered" ===== -->
+<script>
+(function(){
+  if(window.__zedChatDiag) return; window.__zedChatDiag=true;
+  function showDiag(msg, isErr){
+    try{
+      var old=document.getElementById('zed-chat-diag-banner');
+      if(old) old.remove();
+      var b=document.createElement('div');
+      b.id='zed-chat-diag-banner';
+      b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:'+(isErr?'#FF3B30':'#E8C15A')+';color:'+(isErr?'#fff':'#000')+';padding:10px 12px;font-size:12px;font-weight:700;line-height:1.4;text-align:left;white-space:pre-wrap;word-break:break-word;box-shadow:0 4px 20px rgba(0,0,0,.5)';
+      b.textContent=msg;
+      // Tap to dismiss
+      b.addEventListener('click', function(){ try{b.remove()}catch(e){} });
+      document.body.appendChild(b);
+      // Auto-hide after 15s for success, keep error until tapped
+      if(!isErr) setTimeout(function(){ try{b.remove()}catch(e){} }, 8000);
+    }catch(e){}
+  }
+  window.zedShowChatDiag=showDiag;
+  // Patch fetch to capture chat_messages POST/GET failures and show them
+  var _orig = window.fetch;
+  // Note: window.fetch may already be wrapped by Auth interceptor - wrap again on top
+  window.fetch = async function(url, opts){
+    var res;
+    try{ res = await _orig.apply(this, arguments); }catch(e){
+      // Network error - show it
+      try{
+        var u2=String(url||'');
+        if(u2.indexOf('chat_messages')!==-1){
+          showDiag('CHAT NETWORK ERROR\nURL: '+u2+'\nError: '+(e && e.message || e)+'\n\nThis is internet / Supabase down, not RLS.\nTap to dismiss.', true);
+        }
+      }catch(_e){}
+      throw e;
+    }
+    try{
+      var u=String(url||'');
+      if(u.indexOf('chat_messages')!==-1){
+        if(!res.ok){
+          // Clone to read body without breaking original
+          var txt=''; try{ var cl=res.clone(); txt=await cl.text(); }catch(e){ txt='(could not read error body)'; }
+          var method=(opts && opts.method) || 'GET';
+          showDiag('CHAT FAILED - '+method+' -> '+res.status+'\nURL: '+u.slice(0,120)+'\nSupabase says: '+txt.slice(0,600)+'\n\nTap this banner to dismiss.\nIf 401/403 = RLS / key blocked.\nIf 400 = column / uuid wrong.\nIf 404 = table not found.', true);
+          // Also store for tapping Not delivered
+          try{ localStorage.setItem('zed_last_chat_error', JSON.stringify({status:res.status, body:txt.slice(0,800), method:method, at:new Date().toISOString()})); }catch(e){}
+        } else {
+          // Success - clear last error
+          try{ localStorage.removeItem('zed_last_chat_error'); }catch(e){}
+        }
+      }
+    }catch(e){}
+    return res;
+  };
+  // When user taps a "Not delivered" bubble, also show the last error
+  document.addEventListener('click', function(e){
+    try{
+      var el=e.target && e.target.closest ? e.target.closest('.zed-chat-tick') : null;
+      if(el && (el.textContent||'').indexOf('Not delivered')!==-1){
+        var last=null; try{ last=JSON.parse(localStorage.getItem('zed_last_chat_error')||'null'); }catch(_e){}
+        if(last){
+          setTimeout(function(){ showDiag('LAST CHAT ERROR\nStatus: '+last.status+'\n'+last.body+'\n\nTap to dismiss, then tap Not delivered again to retry.', true); }, 300);
+        }
+      }
+    }catch(e){}
+  });
+  console.log('[ZED DIAG] chat error banner active');
+})();
+</script>
+
+
+<!-- ===== ANON ONLY - clear old Auth session ===== -->
+<script>
+(function(){
+  try{ localStorage.removeItem('zed_auth_session'); }catch(e){}
+  try{ localStorage.removeItem('zed_auth_session_v1'); }catch(e){}
+  try{ sessionStorage.removeItem('zed_auth_session'); }catch(e){}
+  console.log('[ZED] ANON ONLY - Auth disabled, using anon + publishable key');
 })();
 </script>
 

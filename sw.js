@@ -1,9 +1,38 @@
-/* ZED Scholar - sw.js v2
+
+/* ZED Scholar - FCM for closed-app pushes (v30) */
+try {
+  importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
+  importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
+  var ZED_FIREBASE_CONFIG_SW = { apiKey: "AIzaSyC9g2K5lOy_DwRw-r67eEb9jjo0ZTcf698",
+    authDomain: "zed-scholar4370.firebaseapp.com",
+    projectId: "zed-scholar4370",
+    storageBucket: "zed-scholar4370.firebasestorage.app",
+    messagingSenderId: "134674701670",
+    appId: "1:134674701670:web:ac5f24478a560c39243ca7",
+    measurementId: "G-X5NPCR1JRY" };
+  // VAPID PUBLIC key is used in HTML getToken() - private key stays on server only, never here.
+  if (typeof firebase !== 'undefined' && ZED_FIREBASE_CONFIG_SW.apiKey && ZED_FIREBASE_CONFIG_SW.apiKey.indexOf('REPLACE') === -1) {
+    firebase.initializeApp(ZED_FIREBASE_CONFIG_SW);
+    var zedMessagingSW = firebase.messaging();
+    zedMessagingSW.onBackgroundMessage(function(payload) {
+      var title = (payload.notification && payload.notification.title) || (payload.data && payload.data.title) || 'ZED Scholar';
+      var opts = {
+        body: (payload.notification && payload.notification.body) || (payload.data && payload.data.body) || 'New update',
+        icon: '/icon-192.png',
+        badge: '/icon-192.png',
+        data: payload.data || {}
+      };
+      return self.registration.showNotification(title, opts);
+    });
+  }
+} catch (e) { /* FCM not available - normal push handler below still works */ }
+
+/* ZED Scholar - sw.js v30
  * Service Worker for ZED Scholar PWA.
  * Deploy this file NEXT TO ZED-SCHOLAR-fixed.html on Cloudflare Pages,
- * at the site root, so ./sw.js resolves. The HTML registers ./sw.js?v=27.
+ * at the site root, so ./sw.js resolves. The HTML registers ./sw.js?v=28.
  *
- * What v2 does for this update:
+ * What v27 does for this update:
  * - Chat relay + notifications: when the page is hidden, the page calls
  *   reg.showNotification(). This worker handles notificationclick so tapping
  *   a notification focuses / opens the app instead of doing nothing.
@@ -17,7 +46,7 @@
  *   for navigations. Supabase / Gemini API calls are NEVER cached.
  */
 
-var CACHE_NAME = 'zed-scholar-v2';
+var CACHE_NAME = 'zed-scholar-v27';
 var CORE_ASSETS = [
   './',
   './index.html',
