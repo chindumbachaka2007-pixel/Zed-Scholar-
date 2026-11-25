@@ -1,4 +1,4 @@
-/* ZED Scholar - sw.js v27
+/* ZED Scholar - sw.js v28
  * Service Worker for ZED Scholar PWA.
  * Deploy this file NEXT TO ZED-SCHOLAR-fixed.html on Cloudflare Pages,
  * at the site root, so ./sw.js resolves. The HTML registers ./sw.js?v=27.
@@ -17,7 +17,7 @@
  *   for navigations. Supabase / Gemini API calls are NEVER cached.
  */
 
-var CACHE_NAME = 'zed-scholar-v27';
+var CACHE_NAME = 'zed-scholar-v28';
 var CORE_ASSETS = [
   './',
   './index.html',
